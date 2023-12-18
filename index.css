@@ -1,0 +1,197 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background: #101010;
+  color: #ffffff;
+  font-family: "Roboto", sans-serif;
+}
+
+#card {
+  width: 100%;
+  min-height: 100%;
+  max-width: 800px;
+  padding: 10px;
+  margin: auto;
+  background-color: #121212;
+  overflow: hidden;
+}
+
+#card h1 {
+  margin-bottom: 10px;
+}
+
+#card-header {
+  display: flex;
+  direction: row;
+  align-items: center;
+}
+
+#card-title {
+  flex: 1;
+  padding: 10px;
+  background: #222;
+  color: #aaa;
+  border-radius: 4px;
+}
+
+#card-description {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #222;
+  color: #aaa;
+  border-radius: 4px;
+}
+
+#card-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 50px;
+}
+
+#card-list li {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-block: 10px;
+  background-color: #2c2c2c;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background .5s;
+  overflow: hidden;
+}
+
+#card-list li.deleting:not(.dragging) {
+  position: relative;
+  background: #f44336;
+}
+
+#card-list li.deleting:not(.dragging) * {
+  display: none;
+}
+
+#card-list li.deleting:not(.dragging)::after {
+  content: "It will delete this task!";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight: bold;
+}
+
+#card-list li span {
+  flex: 1;
+  overflow: hidden;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #ddd;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+input[type="checkbox"]:checked {
+  border-width: 10px;
+  border-color: #2196f3;
+  position: relative;
+}
+
+input[type="checkbox"]:checked::after {
+  content: ":)";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  color: #fff;
+}
+
+
+#card-buttons-container {
+  width: 100%;
+  max-width: 800px;
+  height: 40px;
+  display: flex;
+  margin-left: -10px;
+  padding-inline: 10px;
+  direction: row;
+  position: fixed;
+  bottom: 10px;
+}
+
+#card-button-up,
+#card-button-down {
+  flex: 1;
+  border-radius: 5px;
+  background-color: #2196f3;
+  color: #0000;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+#card-button-down {
+  margin-left: 5px;
+}
+
+#card-buttons-container button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 8px;
+  background: #fff;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+}
+
+#card-button-up {
+  transform: rotate(180deg);
+}
+
+.anim-stretch {
+  animation: stretch 0.3s ease-in-out;
+}
+
+.anim-scale-down {
+  animation: scale-down 0.2s linear;
+}
+
+@keyframes stretch {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes scale-down {
+  to {
+    height: 0;
+  }
+}
