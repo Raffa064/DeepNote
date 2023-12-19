@@ -1,0 +1,29 @@
+:root {
+  --color-bg-1: #101010;
+  --color-bg-2: #121212;
+  --color-bg-3: #222222;
+  --color-bg-4: #2c2c2c;
+
+  --color-accent: #2196f3;
+  --color-deleting: #f44336;
+
+  --color-font-1: #ffffff;
+  --color-font-2: #aaaaaa;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background: var(--color-bg-1);
+  color: var(--color-font-1);
+  font-family: "Roboto", sans-serif;
+}

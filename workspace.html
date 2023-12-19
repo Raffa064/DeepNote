@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/globals.css" />
+    <link rel="stylesheet" href="./css/workspace.css" />
+  </head>
+
+  <body>
+    <div id="card">
+      <header>
+        <h1>DeepNote</h1>
+        <a id="home" href="./index.html">Home</a>
+      </header>
+      <div id="card-header">
+        <input type="checkbox" id="card-checkbox" />
+        <input type="text" id="card-title" placeholder="Title" />
+      </div>
+
+      <input type="text" id="card-description" placeholder="Description" />
+
+      <ul id="card-list" class="sortable"></ul>
+
+      <div id="card-buttons-container">
+        <button id="card-button-up"></button>
+        <button id="card-button-down"></button>
+      </div>
+    </div>
+
+    <script src="./js/Sortable.js"></script>
+    <script src="./js/deep-note.js"></script>
+    <script src="./js/workspace.js"></script>
+  </body>
+</html>

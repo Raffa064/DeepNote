@@ -1,3 +1,5 @@
+const { getWorkspace, createCard, saveWorkspaces } = DeepNote();
+const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
 
@@ -9,7 +11,8 @@ const listElement = document.getElementById("card-list");
 const buttonUp = document.getElementById("card-button-up");
 const buttonDown = document.getElementById("card-button-down");
 
-const root = load() || createCard(false, "", "", []);
+var workspace = getWorkspace(WORKSPACE_NAME);
+var root = workspace.root || createCard(false, "", "", []);
 var current = root;
 renderCard(current);
 
@@ -25,78 +28,19 @@ Sortable.create(listElement, {
 buttonDown.onclick = addNewCard;
 buttonUp.onclick = goBack;
 
-setInterval(save, AUTO_SAVE_DELAY);
+setInterval(saveWorkspaces, AUTO_SAVE_DELAY);
 
-function load() {
-  try {
-    const json = localStorage.dn_root;
-    const parsed = JSON.parse(json);
+function getParams() {
+  const params = {};
 
-    if (parsed.title !== undefined) {
-      return createCard(parsed);
-    }
+  const urlParams = location.search.substring(1).split("&");
 
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function save() {
-  const json = JSON.stringify(root, (k, v) => {
-    if (k == "parent") {
-      return undefined;
-    }
-
-    return v;
-  });
-
-  localStorage.dn_root = json;
-}
-
-function createCard(checked, title, description, children) {
-  if (title == undefined) {
-    const card = checked;
-
-    const _checked = card.checked;
-    const _title = card.title;
-    const _description = card.description;
-    const _children = card.children.map((child) => {
-      return createCard(child);
-    });
-
-    return createCard(_checked, _title, _description, _children);
+  for (const param of urlParams) {
+    const [name, value] = param.split("=").map((x) => x.trim());
+    params[name] = value;
   }
 
-  var card = {
-    checked: checked,
-    title: title,
-    description: description,
-    children: children,
-    parent: null,
-    addChild: function (child) {
-      child.parent = this;
-      this.children.push(child);
-    },
-    removeChild: function (child) {
-      const index = this.children.indexOf(child);
-      this.children.splice(index, 1);
-    },
-    verifyChecked: function () {
-      if (this.hasChildren()) {
-        this.checked = this.children.every((child) => child.checked === true);
-      }
-    },
-    hasChildren: function () {
-      return this.children.length > 0;
-    },
-  };
-
-  children.forEach((child) => {
-    child.parent = card;
-  });
-
-  return card;
+  return params;
 }
 
 function addNewCard() {
