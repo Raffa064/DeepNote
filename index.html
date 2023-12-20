@@ -11,9 +11,19 @@
   <body>
     <div id="container">
       <h1>DeepNote</h1>
-      <input id="search" placeholder="Search" />
+      <input id="workspace-search" placeholder="Search" />
       <ul id="workspace-list"></ul>
       <button id="workspace-create">New workspace</button>
+    </div>
+
+    <div id="modal-container">
+      <div id="modal">
+        <h2 id="modal-title"></h2>
+        <p id="modal-message"></p>
+        <input id="modal-input" />
+        <button class="modal-button" id="modal-positive-button"></button>
+        <button class="modal-button" id="modal-negative-button"></button>
+      </div>
     </div>
 
     <script src="./js/deep-note.js"></script>

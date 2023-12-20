@@ -1,76 +1,42 @@
+const DN_CORE_VERSION = 1;
+
 DeepNote = (() => {
-  const WORKSPACES = loadWorkspaces();
-
-  function loadWorkspaces() {
-    if (localStorage.dn_workspaces !== undefined) {
-      const workspaces = JSON.parse(localStorage.dn_workspaces);
-
-      return workspaces;
-    }
-
-    return {};
+  if (localStorage.dnCoreVersion === undefined) {
+    localStorage.dnCoreVersion = DN_CORE_VERSION;
   }
 
-  function createWorkspace(title, description = "") {
-    const workspace =
-      title.title !== undefined
-        ? createCard(title)
-        : createCard(false, title, description, []);
+  applyUpdatePatchs();
+  const deep_note = load();
 
-    workspace.save = () => {
-      saveWorkspace(workspace);
-    };
+  console.log(deep_note);
 
-    return new Proxy(workspace, {
-      set: (obj, prop, value) => {
-        if (prop === "title") {
-          renameWorkspace(obj[prop], value);
-        }
+  function load() {
+    const json = localStorage.deep_note;
 
-        obj[prop] = value;
-      },
-    });
-  }
+    if (json !== undefined) {
+      const _workspaces = JSON.parse(json);
 
-  function getWorkspace(title) {
-    const json = WORKSPACES[title.trim()];
-    const parsed = JSON.parse(json);
-
-    return createWorkspace(parsed);
-  }
-
-  function getWorkspaceList() {
-    const list = [];
-
-    for (const workspaceName in WORKSPACES) {
-      list.push(workspaceName);
-    }
-
-    return list;
-  }
-
-  function renameWorkspace(oldTitle, newTitle) {
-    const workspaceJSON = WORKSPACES[oldTitle];
-    WORKSPACES[newTitle.trim()] = workspaceJSON;
-    delete WORKSPACES[oldTitle];
-  }
-
-  function saveWorkspace(workspace) {
-    const json = JSON.stringify(workspace, (k, v) => {
-      if (k == "parent") {
-        return undefined;
+      if (_workspaces.length !== undefined) {
+        return _workspaces;
       }
 
-      return v;
+      throw new Error("Invalid dn_workspaces structure");
+    }
+
+    return [];
+  }
+
+  function save() {
+    const json = JSON.stringify(deep_note, (k, v) => {
+      return k === "root" ? undefined : v;
     });
 
-    WORKSPACES[workspace.title] = json;
-    localStorage.dn_workspaces = JSON.stringify(WORKSPACES);
+    localStorage.deep_note = json;
   }
 
   function createCard(checked, title, description, children) {
     if (title == undefined) {
-      const card = checked;
+      const card = checked; // JSON-Parsed card, without functions
 
       const _checked = card.checked;
       const _title = card.title;
@@ -100,9 +66,16 @@ DeepNote = (() => {
         if (this.hasChildren()) {
           this.checked = this.children.every((child) => child.checked === true);
         }
+
+        return this.checked;
       },
       hasChildren: function () {
         return this.children.length > 0;
+      },
+      json: function () {
+        return JSON.stringify(this, (k, v) => {
+          return k == "parent" ? undefined : v;
+        });
       },
     };
 
@@ -113,11 +86,92 @@ DeepNote = (() => {
     return card;
   }
 
+  function createWorkspace(name) {
+    root = name.root || createCard(false, name, "", []);
+
+    var workspace = null;
+
+    if (name.name !== undefined && name.content !== undefined) {
+      workspace = name; // creating from a existing workspace
+    } else {
+      workspace = {
+        // Create from scratch
+        name,
+        content: root.json(),
+        root,
+      };
+    }
+
+    workspace.save = () => {
+      workspace.content = root.json();
+
+      if (!deep_note.find((w) => w.name === workspace.name)) {
+        deep_note.push(workspace);
+      }
+
+      save();
+    };
+
+    workspace.delete = () => {
+      const index = deep_note.indexOf(workspace);
+
+      if (index >= 0) {
+        deep_note.splice(index, 1);
+        save();
+      }
+    };
+
+    workspace.json = () => {
+      return JSON.stringify(workspace, (k, v) => {
+        return k == "root" ? undefined : v;
+      });
+    };
+
+    return workspace;
+  }
+
+  function loadWorkspace(name) {
+    const workspace = deep_note.find((w) => w.name === name);
+
+    if (workspace !== undefined) {
+      const parsedJson = JSON.parse(workspace.content);
+      const root = createCard(parsedJson);
+
+      workspace.root = root;
+      createWorkspace(workspace); // inject functiions
+
+      return workspace;
+    }
+
+    return null;
+  }
+
+  function getWorkspaceNames() {
+    const names = [];
+
+    for (const workspace of deep_note) {
+      names.push(workspace.name);
+    }
+
+    return names;
+  }
+
   return {
-    createWorkspace,
-    getWorkspace,
-    getWorkspaceList,
-    saveWorkspace,
     createCard,
+    createWorkspace,
+    loadWorkspace,
+    getWorkspaceNames,
   };
 })();
+
+function applyUpdatePatchs() {
+  var version = parseInt(localStorage.dnCoreVersion);
+
+  if (version < 1 || version > DN_CORE_VERSION) {
+    throw new Error("Invalid core version");
+  }
+
+  // Apply version patchs
+
+  localStorage.dnCoreVersion = version;
+}

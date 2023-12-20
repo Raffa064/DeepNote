@@ -1,26 +1,218 @@
-const { getWorkspaceList } = DeepNote;
+const { getWorkspaceNames, createWorkspace, loadWorkspace } = DeepNote;
 
+const HOLD_TO_EDIT_DELAY = 300;
+
+const searchInput = document.querySelector("#workspace-search");
 const workspaceList = document.querySelector("#workspace-list");
+const workspaceCreateButton = document.querySelector("#workspace-create");
 
-for (const workspace of getWorkspaceList()) {
-  const li = renderWorkspace(workspace);
-  workspaceList.appendChild(li);
+const modal = createModal();
+
+searchInput.oninput = () => {
+  for (var i = 0; i < workspaceList.children.length; i++) {
+    const workspaceItem = workspaceList.children.item(i);
+    const workspaceName = workspaceItem.querySelector(".workspace-name");
+
+    if (workspaceName.textContent.includes(searchInput.value)) {
+      workspaceItem.style.display = "block";
+    } else {
+      workspaceItem.style.display = "none";
+    }
+  }
+};
+
+refreshList();
+
+workspaceCreateButton.onclick = function () {
+  modal
+    .open()
+    .setTitle("New Workspace")
+    .setInput("", "Workspace name")
+    .setPositive("Create Workspace", () => {
+      const name = modal.getInput();
+      createWorkspace(name).save();
+      openWorkspace(name);
+    });
+};
+
+function createModal() {
+  const modalObj = {};
+
+  const modalContainer = document.querySelector("#modal-container");
+  const modalTitle = document.querySelector("#modal-title");
+  const modalMessage = document.querySelector("#modal-message");
+  const modalInput = document.querySelector("#modal-input");
+  const modalPositiveButton = document.querySelector("#modal-positive-button");
+  const modalNegativeButton = document.querySelector("#modal-negative-button");
+
+  modalContainer.onanimationend = () => {
+    modalContainer.classList.remove("anim-fade-in", "anim-fade-out");
+  };
+
+  modalContainer.ontouchstart = (e) => {
+    if (e.target === modalContainer) {
+      e.preventDefault();
+      close();
+    }
+  };
+
+  function open() {
+    document.body.style.overflow = "hidden";
+    modalContainer.style.display = "flex";
+    modalInput.style.display = "none";
+    modalPositiveButton.style.display = "none";
+    modalNegativeButton.style.display = "none";
+
+    modalContainer.classList.add("anim-fade-in");
+
+    return modalObj;
+  }
+
+  function close() {
+    modalContainer.classList.add("anim-fade-out");
+
+    var callback;
+    function then(_callback) {
+      callback = _callback;
+    }
+
+    const onAnimationEnd = () => {
+      document.body.style.overflow = "scroll";
+      modalContainer.style.display = "none";
+      modalContainer.removeEventListener("animationend", onAnimationEnd);
+
+      if (callback) {
+        callback();
+      }
+    };
+
+    modalContainer.addEventListener("animationend", onAnimationEnd);
+
+    return {
+      then,
+    };
+  }
+
+  function setTitle(title) {
+    modalTitle.textContent = title;
+
+    return modalObj;
+  }
+
+  function setMessage(message) {
+    modalMessage.textContent = message;
+
+    return modalObj;
+  }
+
+  function setInput(value, placeholder) {
+    modalInput.style.display = "block";
+    modalInput.value = value;
+    modalInput.placeholder = placeholder;
+
+    return modalObj;
+  }
+
+  function getInput() {
+    return modalInput.value;
+  }
+
+  function setButton(btn, text, onclick) {
+    const buttons = {
+      positive: modalPositiveButton,
+      negative: modalNegativeButton,
+    };
+
+    const _button = buttons[btn];
+    _button.style.display = "block";
+    _button.textContent = text;
+    _button.onclick = onclick;
+
+    return modalObj;
+  }
+
+  Object.assign(modalObj, {
+    open,
+    close,
+    setTitle,
+    setMessage,
+    setInput,
+    getInput,
+    setPositive: (text, onclick) => setButton("positive", text, onclick),
+    setNegative: (text, onclick) => setButton("negative", text, onclick),
+  });
+
+  return modalObj;
+}
+
+function refreshList() {
+  workspaceList.innerHTML = "";
+  for (const workspaceName of getWorkspaceNames()) {
+    const li = renderWorkspace(workspaceName);
+    workspaceList.appendChild(li);
+  }
+}
+
+function openWorkspace(name) {
+  location.replace("workspace.html?WORKSPACE_NAME=" + name);
 }
 
 function renderWorkspace(name) {
-  const listItem = document.createElement("li");
-  listItem.className = "workspace ";
+  const workspaceItem = document.createElement("li");
+  workspaceItem.className = "workspace";
 
-  const spanElement = document.createElement("span");
-  spanElement.style.setProperty("--length", name.length);
-  spanElement.className = "workspace-title";
-  spanElement.textContent = name;
+  const workspaceName = document.createElement("span");
+  workspaceName.style.setProperty("--length", name.length);
+  workspaceName.className = "workspace-name";
+  workspaceName.textContent = name;
 
-  listItem.appendChild(spanElement);
+  workspaceItem.appendChild(workspaceName);
 
-  listItem.onclick = () => {
-    location.replace("workspace.html?WORKSPACE_NAME=" + name);
+  var editWorkspaceTimeout;
+  workspaceItem.ontouchstart = () => {
+    editWorkspaceTimeout = setTimeout(() => {
+      modal
+        .open()
+        .setTitle("Edit Workspace")
+        .setInput(name, "Workspace name")
+        .setPositive("Save Changes", () => {
+          const workspace = loadWorkspace(name);
+
+          name = modal.getInput();
+          workspace.name = name;
+          workspaceName.textContent = name;
+          workspaceName.style.setProperty("--length", name.length);
+          workspace.save();
+
+          modal.close();
+        })
+        .setNegative("Delete permanently", () => {
+          modal.close().then(() => {
+            modal
+              .open()
+              .setTitle("Delete workspace")
+              .setMessage(
+                "Are you sure to delete the workspace '" + name + "'?",
+              )
+              .setPositive("Cancel", null)
+              .setNegative("Yes, delete it", () => {
+                loadWorkspace(name).delete();
+                workspaceItem.remove();
+
+                modal.close();
+              });
+          });
+        });
+    }, HOLD_TO_EDIT_DELAY);
   };
 
-  return listItem;
+  workspaceItem.ontouchend = () => {
+    clearTimeout(editWorkspaceTimeout);
+  };
+
+  workspaceItem.onclick = () => {
+    openWorkspace(name);
+  };
+
+  return workspaceItem;
 }

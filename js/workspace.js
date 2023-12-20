@@ -1,22 +1,22 @@
-const { getWorkspace, createCard } = DeepNote;
+const { loadWorkspace, createCard } = DeepNote;
 const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
 
-const cardDiv = document.querySelector("#card");
-const checkbox = document.getElementById("card-checkbox");
-const titleInput = document.getElementById("card-title");
-const descriptionInput = document.getElementById("card-description");
-const listElement = document.getElementById("card-list");
-const buttonUp = document.getElementById("card-button-up");
-const buttonDown = document.getElementById("card-button-down");
+const cardContainer = document.querySelector("#card");
+const cardCheckbox = document.getElementById("card-checkbox");
+const cardTitleInput = document.getElementById("card-title");
+const cardDescriptionInput = document.getElementById("card-description");
+const cardChildrenList = document.getElementById("card-list");
+const cardButtonUp = document.getElementById("card-button-up");
+const cardButtonDown = document.getElementById("card-button-down");
 
-var workspace = getWorkspace(WORKSPACE_NAME);
-var current = workspace;
+var workspace = loadWorkspace(WORKSPACE_NAME);
+var current = workspace.root;
 
 renderCard();
 
-Sortable.create(listElement, {
+Sortable.create(cardChildrenList, {
   handle: ".handler",
   animation: 150,
   onEnd: function (evt) {
@@ -25,8 +25,8 @@ Sortable.create(listElement, {
   },
 });
 
-buttonDown.onclick = addNewCard;
-buttonUp.onclick = goBack;
+cardButtonDown.onclick = addNewCard;
+cardButtonUp.onclick = goBack;
 
 setInterval(workspace.save, AUTO_SAVE_DELAY);
 
@@ -44,30 +44,30 @@ function getParams() {
 }
 
 function renderCard() {
-  cardDiv.classList.add("anim-stretch");
-  cardDiv.onanimationend = function () {
-    cardDiv.classList.remove("anim-stretch");
+  cardContainer.classList.add("anim-stretch");
+  cardContainer.onanimationend = function () {
+    cardContainer.classList.remove("anim-stretch");
   };
 
   current.verifyChecked();
-  checkbox.checked = current.checked;
-  checkbox.disabled = current.hasChildren();
-  titleInput.value = current.title;
-  descriptionInput.value = current.description;
+  cardCheckbox.checked = current.checked;
+  cardCheckbox.disabled = current.hasChildren();
+  cardTitleInput.value = current.title;
+  cardDescriptionInput.value = current.description;
 
-  checkbox.onchange = function () {
-    current.checked = checkbox.checked;
+  cardCheckbox.onchange = function () {
+    current.checked = cardCheckbox.checked;
   };
 
-  titleInput.oninput = function () {
-    current.title = titleInput.value;
+  cardTitleInput.oninput = function () {
+    current.title = cardTitleInput.value;
   };
 
-  descriptionInput.oninput = function () {
-    current.description = descriptionInput.value;
+  cardDescriptionInput.oninput = function () {
+    current.description = cardDescriptionInput.value;
   };
 
-  listElement.innerHTML = "";
+  cardChildrenList.innerHTML = "";
   current.children.forEach(function (child) {
     var listItem = document.createElement("li");
 
@@ -98,7 +98,7 @@ function renderCard() {
         listItem.classList.add("anim-scale-down");
         setTimeout(() => {
           current.removeChild(child);
-          checkbox.disabled = current.hasChildren();
+          cardCheckbox.disabled = current.hasChildren();
           listItem.remove();
         }, 200);
       }, DELETION_HOLD_DELAY);
@@ -113,7 +113,7 @@ function renderCard() {
     listItem.ontouchmove = cancelDeletion;
     listItem.ontouchend = cancelDeletion;
 
-    listElement.appendChild(listItem);
+    cardChildrenList.appendChild(listItem);
   });
 }
 
@@ -123,7 +123,7 @@ function addNewCard() {
   current = newCard;
 
   renderCard(current);
-  titleInput.focus();
+  cardTitleInput.focus();
 }
 
 function goBack() {

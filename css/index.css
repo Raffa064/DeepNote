@@ -1,3 +1,10 @@
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 body {
   padding: 10px;
 }
@@ -8,13 +15,13 @@ body {
   margin: auto;
 }
 
-#search {
+#workspace-search {
   width: 100%;
   display: block;
   margin-top: 10px;
   padding: 10px;
   border-radius: 4px;
-  background: var(--color-bg-3);
+  background: var(--color-bg-4);
   color: var(--color-font-1);
 }
 
@@ -55,23 +62,111 @@ body {
   opacity: 0.3;
 }
 
-.workspace-title {
+.workspace-name {
   width: 100%;
   display: block;
-  font-size: max(12px, min(20px, calc(1 / (var(--length) / 11) * 16px)));
+  font-size: max(12px, min(18px, calc(1 / (var(--length) / 8) * 16px)));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
 }
 
 #workspace-create {
   position: fixed;
   bottom: 10px;
   right: 10px;
+}
+
+#workspace-create {
   padding: 10px;
   border-radius: 4px;
   background: var(--color-accent);
-  color: var(--color-bg-2);
+  color: var(--color-font-1);
   box-shadow: 0px 0px 5px #0007;
+}
+
+#modal-container {
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #3333;
+  backdrop-filter: blur(3px) brightness(60%);
+}
+
+#modal {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+#modal-title {
+  color: var(--color-font-1);
+  margin-bottom: 10px;
+}
+
+#modal-message {
+  color: var(--color-font-2);
+  margin-bottom: 10px;
+}
+
+#modal-input {
+  width: 100%;
+  padding: 10px;
+  background: var(--color-bg-4);
+  color: var(--color-font-1);
+  margin-bottom: 10px;
+  border: 1px solid var(--color-font-2);
+  border-radius: 4px;
+}
+
+.modal-button {
+  width: 100%;
+  padding: 10px;
+  color: var(--color-font-1);
+  border-radius: 4px;
+}
+
+.modal-button + .modal-button {
+  margin-top: 10px;
+}
+
+#modal-positive-button {
+  background: var(--color-accent);
+}
+
+#modal-negative-button {
+  background: var(--color-error);
+}
+
+.anim-fade-in {
+  animation: fade-in 0.6s ease;
+}
+
+.anim-fade-out {
+  animation: fade-out 0.5s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
