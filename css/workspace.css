@@ -72,7 +72,7 @@ header #home {
 
 #card-list li.deleting:not(.dragging) {
   position: relative;
-  background: var(--color-deleting);
+  background: var(--color-error);
 }
 
 #card-list li.deleting:not(.dragging) * {

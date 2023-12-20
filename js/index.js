@@ -1,17 +1,15 @@
-const { listWorkspaces } = DeepNote();
+const { getWorkspaceList } = DeepNote;
 
 const workspaceList = document.querySelector("#workspace-list");
 
-for (const workspace of listWorkspaces()) {
+for (const workspace of getWorkspaceList()) {
   const li = renderWorkspace(workspace);
   workspaceList.appendChild(li);
 }
 
-function renderWorkspace(workspace) {
-  const { name, root } = workspace;
-
+function renderWorkspace(name) {
   const listItem = document.createElement("li");
-  listItem.className = "workspace " + (root.checked ? "complete" : "");
+  listItem.className = "workspace ";
 
   const spanElement = document.createElement("span");
   spanElement.style.setProperty("--length", name.length);

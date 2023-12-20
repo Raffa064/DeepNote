@@ -1,4 +1,4 @@
-const { getWorkspace, createCard, saveWorkspaces } = DeepNote();
+const { getWorkspace, createCard } = DeepNote;
 const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
@@ -12,9 +12,9 @@ const buttonUp = document.getElementById("card-button-up");
 const buttonDown = document.getElementById("card-button-down");
 
 var workspace = getWorkspace(WORKSPACE_NAME);
-var root = workspace.root || createCard(false, "", "", []);
-var current = root;
-renderCard(current);
+var current = workspace;
+
+renderCard();
 
 Sortable.create(listElement, {
   handle: ".handler",
@@ -28,7 +28,7 @@ Sortable.create(listElement, {
 buttonDown.onclick = addNewCard;
 buttonUp.onclick = goBack;
 
-setInterval(saveWorkspaces, AUTO_SAVE_DELAY);
+setInterval(workspace.save, AUTO_SAVE_DELAY);
 
 function getParams() {
   const params = {};
@@ -37,26 +37,10 @@ function getParams() {
 
   for (const param of urlParams) {
     const [name, value] = param.split("=").map((x) => x.trim());
-    params[name] = value;
+    params[name] = decodeURI(value);
   }
 
   return params;
-}
-
-function addNewCard() {
-  var newCard = createCard(false, "", "", []);
-  current.addChild(newCard);
-  current = newCard;
-
-  renderCard(current);
-  titleInput.focus();
-}
-
-function goBack() {
-  if (current.parent) {
-    current = current.parent;
-    renderCard(current);
-  }
 }
 
 function renderCard() {
@@ -131,4 +115,20 @@ function renderCard() {
 
     listElement.appendChild(listItem);
   });
+}
+
+function addNewCard() {
+  var newCard = createCard(false, "", "", []);
+  current.addChild(newCard);
+  current = newCard;
+
+  renderCard(current);
+  titleInput.focus();
+}
+
+function goBack() {
+  if (current.parent) {
+    current = current.parent;
+    renderCard(current);
+  }
 }

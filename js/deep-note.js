@@ -1,27 +1,62 @@
-function DeepNote() {
+DeepNote = (() => {
   const WORKSPACES = loadWorkspaces();
 
   function loadWorkspaces() {
     if (localStorage.dn_workspaces !== undefined) {
-      const json = JSON.parse(localStorage.dn_workspaces);
-
-      const workspaces = [];
-      for (const workspace of json) {
-        const rootCard = createCard(workspace.root);
-        workspaces.push({
-          name: workspace.name,
-          root: rootCard,
-        });
-      }
+      const workspaces = JSON.parse(localStorage.dn_workspaces);
 
       return workspaces;
     }
 
-    return [];
+    return {};
   }
 
-  function saveWorkspaces() {
-    const json = JSON.stringify(WORKSPACES, (k, v) => {
+  function createWorkspace(title, description = "") {
+    const workspace =
+      title.title !== undefined
+        ? createCard(title)
+        : createCard(false, title, description, []);
+
+    workspace.save = () => {
+      saveWorkspace(workspace);
+    };
+
+    return new Proxy(workspace, {
+      set: (obj, prop, value) => {
+        if (prop === "title") {
+          renameWorkspace(obj[prop], value);
+        }
+
+        obj[prop] = value;
+      },
+    });
+  }
+
+  function getWorkspace(title) {
+    const json = WORKSPACES[title.trim()];
+    const parsed = JSON.parse(json);
+
+    return createWorkspace(parsed);
+  }
+
+  function getWorkspaceList() {
+    const list = [];
+
+    for (const workspaceName in WORKSPACES) {
+      list.push(workspaceName);
+    }
+
+    return list;
+  }
+
+  function renameWorkspace(oldTitle, newTitle) {
+    const workspaceJSON = WORKSPACES[oldTitle];
+    WORKSPACES[newTitle.trim()] = workspaceJSON;
+    delete WORKSPACES[oldTitle];
+  }
+
+  function saveWorkspace(workspace) {
+    const json = JSON.stringify(workspace, (k, v) => {
       if (k == "parent") {
         return undefined;
       }
@@ -29,26 +64,8 @@ function DeepNote() {
       return v;
     });
 
-    localStorage.dn_workspaces = json;
-  }
-
-  function createWorkspace(name) {
-    const workspace = {
-      name,
-      root: createCard(false, "", "", []),
-    };
-
-    WORKSPACES.push(workspace);
-
-    return workspace;
-  }
-
-  function getWorkspace(name) {
-    return WORKSPACES.find((w) => w.name === name);
-  }
-
-  function listWorkspaces() {
-    return WORKSPACES;
+    WORKSPACES[workspace.title] = json;
+    localStorage.dn_workspaces = JSON.stringify(WORKSPACES);
   }
 
   function createCard(checked, title, description, children) {
@@ -97,11 +114,10 @@ function DeepNote() {
   }
 
   return {
-    loadWorkspaces,
-    saveWorkspaces,
     createWorkspace,
     getWorkspace,
-    listWorkspaces,
+    getWorkspaceList,
+    saveWorkspace,
     createCard,
   };
-}
+})();
