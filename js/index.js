@@ -59,9 +59,10 @@ function createModal() {
   function open() {
     document.body.style.overflow = "hidden";
     modalContainer.style.display = "flex";
-    modalInput.style.display = "none";
-    modalPositiveButton.style.display = "none";
-    modalNegativeButton.style.display = "none";
+
+    modalContainer.querySelectorAll("#modal *").forEach((elt) => {
+      elt.style.display = "none"; // Hide all modal elements
+    });
 
     modalContainer.classList.add("anim-fade-in");
 
@@ -94,12 +95,14 @@ function createModal() {
   }
 
   function setTitle(title) {
+    modalTitle.style.display = "block";
     modalTitle.textContent = title;
 
     return modalObj;
   }
 
   function setMessage(message) {
+    modalMessage.style.display = "block";
     modalMessage.textContent = message;
 
     return modalObj;
@@ -174,6 +177,7 @@ function renderWorkspace(name) {
       modal
         .open()
         .setTitle("Edit Workspace")
+        .setMessage("You can change workspace name bellow:")
         .setInput(name, "Workspace name")
         .setPositive("Save Changes", () => {
           const workspace = loadWorkspace(name);
