@@ -3,6 +3,7 @@ const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
 
+const workspaceName = document.querySelector("#workspace-name");
 const cardContainer = document.querySelector("#card");
 const cardCheckbox = document.getElementById("card-checkbox");
 const cardTitleInput = document.getElementById("card-title");
@@ -14,6 +15,7 @@ const cardButtonDown = document.getElementById("card-button-down");
 var workspace = loadWorkspace(WORKSPACE_NAME);
 var current = workspace.root;
 
+workspaceName.textContent = WORKSPACE_NAME;
 renderCard();
 
 Sortable.create(cardChildrenList, {

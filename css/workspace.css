@@ -15,6 +15,11 @@ header {
   align-items: center;
 }
 
+header #workspace-name {
+  color: var(--color-font-1);
+  font-size: 25px;
+}
+
 header #home {
   display: block;
   width: 40px;
