@@ -3,9 +3,14 @@
   --color-bg-2: #121212;
   --color-bg-3: #222222;
   --color-bg-4: #2c2c2c;
+  --color-bg-5: #3333;
+
+  --color-shadow: #0007;
 
   --color-accent: #2196f3;
+  --color-accent-light: #31b2f7;
   --color-error: #f44336;
+  --color-error-light: #f46356;
 
   --color-font-1: #ffffff;
   --color-font-2: #aaaaaa;
@@ -26,4 +31,19 @@ body {
   background: var(--color-bg-1);
   color: var(--color-font-1);
   font-family: "Roboto", sans-serif;
+}
+
+button:active {
+  animation: button-clicked 0.2s ease;
+}
+
+@keyframes button-clicked {
+  from,
+  to {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
 }

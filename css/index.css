@@ -75,14 +75,16 @@ body {
   position: fixed;
   bottom: 10px;
   right: 10px;
-}
-
-#workspace-create {
   padding: 10px;
   border-radius: 4px;
   background: var(--color-accent);
   color: var(--color-font-1);
-  box-shadow: 0px 0px 5px #0007;
+  box-shadow: 0px 0px 5px var(--color-shadow);
+  transition: 0.2s;
+}
+
+#workspace-create:active {
+  background: var(--color-accent-light);
 }
 
 #modal-container {
@@ -95,7 +97,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  background: #3333;
+  background: var(--color-bg-5);
   backdrop-filter: blur(3px) brightness(60%);
 }
 
@@ -130,6 +132,7 @@ body {
   padding: 10px;
   color: var(--color-font-1);
   border-radius: 4px;
+  transition: 0.2s;
 }
 
 .modal-button + .modal-button {
@@ -140,8 +143,16 @@ body {
   background: var(--color-accent);
 }
 
+#modal-positive-button:active {
+  background: var(--color-accent-light);
+}
+
 #modal-negative-button {
   background: var(--color-error);
+}
+
+#modal-negative-button:active {
+  background: var(--color-error-light);
 }
 
 .anim-fade-in {
