@@ -152,6 +152,10 @@ body {
   animation: fade-out 0.2s ease;
 }
 
+.anim-stretch {
+  animation: stretch 0.4s ease;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -169,5 +173,16 @@ body {
 
   to {
     opacity: 0;
+  }
+}
+
+@keyframes stretch {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
   }
 }
