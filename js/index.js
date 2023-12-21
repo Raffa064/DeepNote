@@ -194,7 +194,7 @@ function renderWorkspace(name) {
               .setMessage(
                 "Are you sure to delete the workspace '" + name + "'?",
               )
-              .setPositive("Cancel", null)
+              .setPositive("Cancel", () => modal.close())
               .setNegative("Yes, delete it", () => {
                 loadWorkspace(name).delete();
                 workspaceItem.remove();
