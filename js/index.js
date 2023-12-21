@@ -14,7 +14,7 @@ searchInput.oninput = () => {
     const workspaceName = workspaceItem.querySelector(".workspace-name");
 
     if (workspaceName.textContent.includes(searchInput.value)) {
-      workspaceItem.style.display = "block";
+      workspaceItem.style.display = "flex";
     } else {
       workspaceItem.style.display = "none";
     }
