@@ -3,10 +3,19 @@ const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
 
-const workspaceName = document.querySelector("#workspace-name");
-const cardContainer = document.querySelector("#card");
+const workspaceName = document.getElementById("workspace-name");
+const cardContainer = document.getElementById("card");
 const cardCheckbox = document.getElementById("card-checkbox");
 const cardTitleInput = document.getElementById("card-title");
+const cardDescriptionContainer = document.getElementById(
+  "card-description-container",
+);
+const cardDescriptionExpand = document.getElementById(
+  "card-description-expand",
+);
+const cardDescriptionColapse = document.getElementById(
+  "card-description-colapse",
+);
 const cardDescriptionInput = document.getElementById("card-description");
 const cardChildrenList = document.getElementById("card-list");
 const cardButtonUp = document.getElementById("card-button-up");
@@ -17,6 +26,16 @@ var current = workspace.root;
 
 workspaceName.textContent = WORKSPACE_NAME;
 renderCard();
+
+cardDescriptionExpand.onclick = () => {
+  document.body.style.overflow = "hidden";
+  cardDescriptionContainer.classList.add("expanded");
+};
+
+cardDescriptionColapse.onclick = () => {
+  document.body.style.overflow = "scroll";
+  cardDescriptionContainer.classList.remove("expanded");
+};
 
 Sortable.create(cardChildrenList, {
   handle: ".handler",

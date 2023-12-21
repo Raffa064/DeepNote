@@ -19,8 +19,18 @@
         <input type="text" id="card-title" placeholder="Title" />
       </div>
 
-      <input type="text" id="card-description" placeholder="Description" />
-
+      <div id="card-description-container" class="expande">
+        <span id="card-description-header">
+          <span>Description</span>
+          <button id="card-description-expand">Expand</button>
+          <button id="card-description-colapse">Colapse</button>
+        </span>
+        <textarea
+          type="text"
+          id="card-description"
+          placeholder="Description"
+        ></textarea>
+      </div>
       <ul id="card-list" class="sortable"></ul>
 
       <div id="card-buttons-container">
