@@ -33,6 +33,45 @@ body {
   font-family: "Roboto", sans-serif;
 }
 
+#error-list {
+  width: max(400px, min(50%, 800px));
+  position: fixed;
+  top: 0;
+  right: 0;
+  list-style: none;
+  padding: 10px;
+  z-index: 20;
+}
+
+.error-notification {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  background: var(--color-bg-4);
+  border-radius: 4px;
+  border: 1px solid var(--color-bg-1);
+  overflow: hidden;
+}
+
+.error-notification-title {
+  color: var(--color-error-light);
+  font-weight: bold;
+}
+
+.error-notification-message {
+  color: var(--color-error-light);
+}
+
+.error-notification-progress {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--progress) * 1%);
+  height: 3px;
+  background: var(--color-accent);
+}
+
 button:active {
   animation: button-clicked 0.2s ease;
 }
