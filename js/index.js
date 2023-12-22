@@ -151,7 +151,7 @@ function createModal() {
 function refreshList() {
   workspaceList.innerHTML = "";
   for (const workspaceName of getWorkspaceNames()) {
-    const li = renderWorkspac(workspaceName);
+    const li = renderWorkspace(workspaceName);
     workspaceList.appendChild(li);
   }
 }

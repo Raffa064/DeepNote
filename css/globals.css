@@ -34,7 +34,7 @@ body {
 }
 
 #error-list {
-  width: max(400px, min(50%, 800px));
+  width: max(300px, min(50%, 800px));
   position: fixed;
   top: 0;
   right: 0;
