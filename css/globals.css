@@ -41,6 +41,7 @@ body {
   list-style: none;
   padding: 10px;
   z-index: 20;
+  pointer-events: none;
 }
 
 .error-notification {

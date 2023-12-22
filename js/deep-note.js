@@ -8,8 +8,6 @@ DeepNote = (() => {
   applyUpdatePatchs();
   const deep_note = load();
 
-  console.log(deep_note);
-
   function load() {
     const json = localStorage.deep_note;
 

@@ -52,8 +52,17 @@ header #home {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  transition: 0.3s;
+}
+
+#card-description-container.expanded {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   z-index: 5;
-  transition: 0.2s;
 }
 
 #card-description-header {
@@ -96,16 +105,6 @@ header #home {
   border-bottom-right-radius: 4px;
   resize: none;
   font-family: monospace;
-}
-
-#card-description-container.expanded {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  animation: stretch 0.2s ease;
 }
 
 #card-list {
