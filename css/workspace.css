@@ -9,6 +9,8 @@
 }
 
 header {
+  height: 30px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -22,14 +24,12 @@ header #workspace-name {
 
 header #home {
   display: block;
-  width: 40px;
-  height: 40px;
   text-decoration: none;
   color: var(--color-font-1);
 }
 
-#card h1 {
-  margin-bottom: 10px;
+header #home:active {
+  animation: stretch 0.2s;
 }
 
 #card-header {
@@ -110,7 +110,7 @@ header #home {
 #card-list {
   list-style: none;
   padding: 0;
-  padding-bottom: 50px;
+  padding-bottom: 60px;
 }
 
 #card-list li {
