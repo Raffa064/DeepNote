@@ -30,11 +30,13 @@ renderCard();
 cardDescriptionExpand.onclick = () => {
   document.body.style.overflow = "hidden";
   cardDescriptionContainer.classList.add("expanded");
+  cardDescriptionInput.focus();
 };
 
 cardDescriptionColapse.onclick = () => {
   document.body.style.overflow = "scroll";
   cardDescriptionContainer.classList.remove("expanded");
+  cardDescriptionInput.blur();
 };
 
 Sortable.create(cardChildrenList, {
