@@ -125,6 +125,7 @@ header #home:active {
   cursor: pointer;
   transition: background 0.5s;
   overflow: hidden;
+  position: relative;
 }
 
 #card-list li.deleting:not(.dragging) {
@@ -149,6 +150,15 @@ header #home:active {
 #card-list li span {
   flex: 1;
   overflow: hidden;
+}
+
+#card-list li:not(.deleting)::before {
+  content: attr(data-counter);
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-size: 14px;
+  color: var(--color-font-2);
 }
 
 input[type="checkbox"] {

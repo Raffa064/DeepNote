@@ -95,6 +95,15 @@ function renderCard() {
   current.children.forEach(function (child) {
     var listItem = document.createElement("li");
 
+    var totalChildren = child.children.length;
+    if (totalChildren > 0) {
+      var checkedChildren = child.children.reduce((prev, curr) => {
+        return curr.checked ? prev + 1 : prev;
+      }, 0);
+
+      listItem.dataset.counter = checkedChildren + "/" + totalChildren;
+    }
+
     var childCheckbox = document.createElement("input");
     childCheckbox.classList.add("handler");
     childCheckbox.type = "checkbox";
