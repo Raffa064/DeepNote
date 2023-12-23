@@ -161,6 +161,11 @@ header #home:active {
   color: var(--color-font-2);
 }
 
+#card-list li#card-no-children {
+  background: var(--color-bg-3);
+  color: var(--color-font-2);
+}
+
 input[type="checkbox"] {
   margin-right: 10px;
   width: 20px;
@@ -242,10 +247,10 @@ input[type="checkbox"]:disabled:hover::after {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 8px;
-  height: 10px;
+  width: 10px;
+  height: 8px;
   background: var(--color-font-1);
-  clip-path: polygon(0% 0%, 0% 100%, 100% 50%);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
 }
 
 #card-button-up {
