@@ -43,8 +43,9 @@ Sortable.create(cardChildrenList, {
   handle: ".handler",
   animation: 150,
   onEnd: function (evt) {
-    var movedChild = current.children.splice(evt.oldIndex, 1)[0];
-    current.children.splice(evt.newIndex, 0, movedChild);
+    const len = current.children.length - 1;
+    var movedChild = current.children.splice(len - evt.oldIndex, 1)[0];
+    current.children.splice(len - evt.newIndex, 0, movedChild);
   },
 });
 
@@ -136,7 +137,7 @@ function renderCard() {
     listItem.ontouchmove = cancelDeletion;
     listItem.ontouchend = cancelDeletion;
 
-    cardChildrenList.appendChild(listItem);
+    cardChildrenList.insertBefore(listItem, cardChildrenList.firstChild);
   });
 }
 
