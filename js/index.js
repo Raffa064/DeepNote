@@ -157,7 +157,7 @@ function refreshList() {
 }
 
 function openWorkspace(name) {
-  location.replace("workspace.html?WORKSPACE_NAME=" + name);
+  location.replace("workspace.html?WORKSPACE_NAME=" + encodeURI(name));
 }
 
 function renderWorkspace(name) {
