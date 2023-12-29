@@ -162,6 +162,7 @@ header #home:active {
 }
 
 #card-list li#card-no-children {
+  padding: 10px;
   background: var(--color-bg-3);
   color: var(--color-font-2);
 }
