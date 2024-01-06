@@ -21,6 +21,7 @@ searchInput.oninput = () => {
   }
 };
 
+setupKeyBindings();
 refreshList();
 
 workspaceCreateButton.onclick = function () {
@@ -219,4 +220,28 @@ function renderWorkspace(name) {
   };
 
   return workspaceItem;
+}
+
+function setupKeyBindings() {
+  setKey({ which: "Tab" }, () => {
+    searchInput.focus();
+  });
+
+  setKey({ which: "Enter" }, () => {
+    const names = getWorkspaceNames();
+
+    for (const name of names) {
+      if (searchInput.value.toLowerCase() === name.toLowerCase()) {
+        openWorkspace(name);
+        return;
+      }
+    }
+
+    workspaceCreateButton.click();
+    modal.setInput(searchInput.value);
+  });
+
+  setKey({ which: "c", ctrl: true }, () => {
+    modal.close();
+  });
 }

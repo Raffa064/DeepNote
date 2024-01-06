@@ -232,26 +232,14 @@ function goBack() {
 }
 
 function setupKeyBindings() {
-  function setKey(key, command) {
-    window.addEventListener("keydown", (evt) => {
-      if (key.which === evt.key) {
-        if (key.ctrl && !evt.ctrlKey) return;
-        if (key.alt && !evt.altKey) return;
-        if (key.shift && !evt.shiftKey) return;
-
-        if (!key.manualEventLocker) {
-          evt.preventDefault();
-        }
-
-        command(evt);
-      }
-    });
-  }
-
   setKey({ which: "b", ctrl: true }, goBack);
   setKey({ which: "n", ctrl: true }, addNewCard);
   setKey({ which: "e", ctrl: true }, toggleExpandedDescription);
   setKey({ which: "l", ctrl: true }, toggleListSelection);
+
+  setKey({ which: "h", ctrl: true }, () => {
+    window.location.replace("index.html");
+  });
 
   setKey({ which: "ArrowUp", manualEventLocker: true }, (evt) => {
     if (cardChildrenList.classList.contains("selection")) {
