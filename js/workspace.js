@@ -27,17 +27,8 @@ var current = workspace.root;
 workspaceName.textContent = WORKSPACE_NAME;
 renderCard();
 
-cardDescriptionExpand.onclick = () => {
-  document.body.style.overflow = "hidden";
-  cardDescriptionContainer.classList.add("expanded");
-  cardDescriptionInput.focus();
-};
-
-cardDescriptionColapse.onclick = () => {
-  document.body.style.overflow = "scroll";
-  cardDescriptionContainer.classList.remove("expanded");
-  cardDescriptionInput.blur();
-};
+cardDescriptionExpand.onclick = toggleExpandedDescription;
+cardDescriptionColapse.onclick = toggleExpandedDescription;
 
 Sortable.create(cardChildrenList, {
   handle: ".handler",
@@ -52,6 +43,7 @@ Sortable.create(cardChildrenList, {
 cardButtonDown.onclick = addNewCard;
 cardButtonUp.onclick = goBack;
 
+setupKeyBindings();
 setInterval(workspace.save, AUTO_SAVE_DELAY);
 
 function getParams() {
@@ -67,7 +59,23 @@ function getParams() {
   return params;
 }
 
+function toggleExpandedDescription() {
+  if (cardDescriptionContainer.classList.contains("expanded")) {
+    document.body.style.overflow = "scroll";
+    cardDescriptionContainer.classList.remove("expanded");
+    cardDescriptionInput.blur();
+  } else {
+    document.body.style.overflow = "hidden";
+    cardDescriptionContainer.classList.add("expanded");
+    cardDescriptionInput.focus();
+  }
+}
+
 function renderCard() {
+  if (cardChildrenList.classList.contains("selection")) {
+    toggleListSelection();
+  }
+
   cardContainer.classList.add("anim-stretch");
   cardContainer.onanimationend = function () {
     cardContainer.classList.remove("anim-stretch");
@@ -158,6 +166,55 @@ function renderCard() {
   }
 }
 
+function toggleListSelection() {
+  const enabled = cardChildrenList.classList.toggle("selection");
+
+  if (enabled) {
+    document.body.style.overflow = "hidden";
+    var selectedIndex = 0;
+    var selectedElt = null;
+
+    function select() {
+      if (selectedElt) {
+        selectedElt.classList.remove("selected");
+      }
+
+      selectedElt = cardChildrenList.children.item(selectedIndex);
+      selectedElt.classList.add("selected");
+      selectedElt.scrollIntoView();
+    }
+
+    select();
+
+    cardChildrenList.backSelection = () => {
+      selectedIndex--;
+
+      if (selectedIndex < 0) {
+        selectedIndex = current.children.length - 1;
+      }
+
+      select();
+    };
+
+    cardChildrenList.nextSelection = () => {
+      selectedIndex = ++selectedIndex % current.children.length;
+      select();
+    };
+
+    cardChildrenList.openSelection = () => {
+      const length = current.children.length - 1;
+      const card = current.children[length - selectedIndex];
+      current = card;
+      renderCard();
+    };
+  } else {
+    document.body.style.overflow = "scroll";
+    cardChildrenList.querySelectorAll(".selected").forEach((child) => {
+      child.classList.remove("selected");
+    });
+  }
+}
+
 function addNewCard() {
   var newCard = createCard(false, "", "", []);
   current.addChild(newCard);
@@ -172,4 +229,48 @@ function goBack() {
     current = current.parent;
     renderCard(current);
   }
+}
+
+function setupKeyBindings() {
+  function setKey(key, command) {
+    window.addEventListener("keydown", (evt) => {
+      if (key.which === evt.key) {
+        if (key.ctrl && !evt.ctrlKey) return;
+        if (key.alt && !evt.altKey) return;
+        if (key.shift && !evt.shiftKey) return;
+
+        if (!key.manualEventLocker) {
+          evt.preventDefault();
+        }
+
+        command(evt);
+      }
+    });
+  }
+
+  setKey({ which: "b", ctrl: true }, goBack);
+  setKey({ which: "n", ctrl: true }, addNewCard);
+  setKey({ which: "e", ctrl: true }, toggleExpandedDescription);
+  setKey({ which: "l", ctrl: true }, toggleListSelection);
+
+  setKey({ which: "ArrowUp", manualEventLocker: true }, (evt) => {
+    if (cardChildrenList.classList.contains("selection")) {
+      evt.preventDefault();
+      cardChildrenList.backSelection();
+    }
+  });
+
+  setKey({ which: "ArrowDown", manualEventLocker: true }, (evt) => {
+    if (cardChildrenList.classList.contains("selection")) {
+      evt.preventDefault();
+      cardChildrenList.nextSelection();
+    }
+  });
+
+  setKey({ which: "Enter", manualEventLocker: true }, (evt) => {
+    if (cardChildrenList.classList.contains("selection")) {
+      evt.preventDefault();
+      cardChildrenList.openSelection();
+    }
+  });
 }
