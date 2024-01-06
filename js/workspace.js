@@ -170,6 +170,11 @@ function toggleListSelection() {
   const enabled = cardChildrenList.classList.toggle("selection");
 
   if (enabled) {
+    if (current.children.length == 0) {
+      cardChildrenList.classList.remove("selection");
+      return;
+    }
+
     document.body.style.overflow = "hidden";
     var selectedIndex = 0;
     var selectedElt = null;
@@ -203,6 +208,12 @@ function toggleListSelection() {
 
     cardChildrenList.openSelection = () => {
       const length = current.children.length - 1;
+
+      if (length < 0) {
+        toggleListSelection();
+        return;
+      }
+
       const card = current.children[length - selectedIndex];
       current = card;
       renderCard();
