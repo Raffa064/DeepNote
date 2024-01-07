@@ -34,6 +34,10 @@ body {
   gap: 10px;
 }
 
+.workspace.highlight {
+  outline: 2px solid var(--color-font-2);
+}
+
 .workspace {
   display: flex;
   align-items: flex-end;

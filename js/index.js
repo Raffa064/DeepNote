@@ -9,15 +9,18 @@ const workspaceCreateButton = document.querySelector("#workspace-create");
 const modal = createModal();
 
 searchInput.oninput = () => {
-  for (var i = 0; i < workspaceList.children.length; i++) {
-    const workspaceItem = workspaceList.children.item(i);
-    const workspaceName = workspaceItem.querySelector(".workspace-name");
+  const result = searchWorkspace((name, elt, match) => {
+    elt.classList.remove("highlight");
 
-    if (workspaceName.textContent.includes(searchInput.value)) {
-      workspaceItem.style.display = "flex";
+    if (match) {
+      elt.style.display = "flex";
     } else {
-      workspaceItem.style.display = "none";
+      elt.style.display = "none";
     }
+  });
+
+  if (result.matched.length > 0) {
+    result.matched[0].elt.classList.add("highlight");
   }
 };
 
@@ -113,6 +116,7 @@ function createModal() {
     modalInput.style.display = "block";
     modalInput.value = value;
     modalInput.placeholder = placeholder;
+    modalInput.focus();
 
     return modalObj;
   }
@@ -222,23 +226,51 @@ function renderWorkspace(name) {
   return workspaceItem;
 }
 
+function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
+  const searchQuery = searchInput.value;
+
+  const results = {
+    matched: [],
+    unmatched: [],
+  };
+
+  for (let i = 0; i < workspaceList.children.length; i++) {
+    const workspaceItem = workspaceList.children.item(i);
+    const name = workspaceItem.querySelector(".workspace-name").textContent;
+
+    const workspace = {
+      name,
+      elt: workspaceItem,
+    };
+
+    const match = name
+      .toLowerCase()
+      .trim()
+      .includes(searchQuery.toLowerCase().trim());
+    matcherCallback(name, workspaceItem, match);
+
+    if (match) {
+      results.matched.push(workspace);
+      continue;
+    }
+
+    results.unmatched.push(workspace);
+  }
+
+  return results;
+}
+
 function setupKeyBindings() {
   setKey({ which: "Tab" }, () => {
     searchInput.focus();
   });
 
   setKey({ which: "Enter" }, () => {
-    const names = getWorkspaceNames();
+    const { matched } = searchWorkspace();
 
-    for (const name of names) {
-      if (searchInput.value.toLowerCase() === name.toLowerCase()) {
-        openWorkspace(name);
-        return;
-      }
+    if (matched.length > 0) {
+      openWorkspace(matched[0].name);
     }
-
-    workspaceCreateButton.click();
-    modal.setInput(searchInput.value);
   });
 
   setKey({ which: "c", ctrl: true }, () => {
