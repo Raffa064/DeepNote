@@ -276,4 +276,9 @@ function setupKeyBindings() {
   setKey({ which: "c", ctrl: true }, () => {
     modal.close();
   });
+
+  setKey({ which: "n", ctrl: true }, () => {
+    workspaceCreateButton.click();
+    modal.setInput(searchInput.value, "Workspace name");
+  });
 }
