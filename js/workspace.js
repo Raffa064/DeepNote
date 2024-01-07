@@ -72,10 +72,6 @@ function toggleExpandedDescription() {
 }
 
 function renderCard() {
-  if (cardChildrenList.classList.contains("selection")) {
-    toggleListSelection();
-  }
-
   cardContainer.classList.add("anim-stretch");
   cardContainer.onanimationend = function () {
     cardContainer.classList.remove("anim-stretch");
@@ -157,12 +153,20 @@ function renderCard() {
 
       cardChildrenList.insertBefore(listItem, cardChildrenList.firstChild);
     });
+
+    if (cardChildrenList.classList.contains("selection")) {
+      cardChildrenList.resetSelection();
+    }
   } else {
     const cardNoChildren = document.createElement("li");
     cardNoChildren.id = "card-no-children";
     cardNoChildren.textContent =
       "This card has no children. You can add a new subcard by pressing arrow down button.";
     cardChildrenList.appendChild(cardNoChildren);
+
+    if (cardChildrenList.classList.contains("selection")) {
+      toggleListSelection();
+    }
   }
 }
 
@@ -176,6 +180,7 @@ function toggleListSelection() {
     }
 
     document.body.style.overflow = "hidden";
+
     var selectedIndex = 0;
     var selectedElt = null;
 
@@ -190,6 +195,8 @@ function toggleListSelection() {
     }
 
     select();
+
+    cardChildrenList.dataset.cardTitle = current.title;
 
     cardChildrenList.backSelection = () => {
       selectedIndex--;
@@ -217,6 +224,12 @@ function toggleListSelection() {
       const card = current.children[length - selectedIndex];
       current = card;
       renderCard();
+    };
+
+    cardChildrenList.resetSelection = () => {
+      cardChildrenList.dataset.cardTitle = current.title;
+      selectedIndex = 0;
+      select();
     };
   } else {
     document.body.style.overflow = "scroll";
@@ -247,6 +260,10 @@ function setupKeyBindings() {
   setKey({ which: "n", ctrl: true }, addNewCard);
   setKey({ which: "e", ctrl: true }, toggleExpandedDescription);
   setKey({ which: "l", ctrl: true }, toggleListSelection);
+
+  setKey({ which: "m", ctrl: true }, () => {
+    cardCheckbox.click();
+  });
 
   setKey({ which: "h", ctrl: true }, () => {
     window.location.replace("index.html");

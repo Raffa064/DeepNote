@@ -121,9 +121,20 @@ header #home:active {
   width: 100%;
   height: 100%;
   padding: 10px;
+  padding-top: calc(15px + 1rem);
   z-index: 5;
   transition: 0.2s;
   animation: stretch 0.3s ease;
+}
+
+#card-list.selection::before {
+  content: 'Inside "' attr(data-card-title) '"';
+  position: absolute;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 #card-list.selection li.selected {
