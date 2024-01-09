@@ -191,16 +191,6 @@ body {
   }
 }
 
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
 @keyframes stretch {
   0%,
   100% {

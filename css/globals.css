@@ -92,6 +92,11 @@ button:active {
 
 #keybindings-container.visible {
   display: block;
+  animation: fade-in 0.2s ease;
+}
+
+#keybindings-container.fade-out {
+  animation: fade-out 0.2s ease;
 }
 
 #keybindings-title {
@@ -122,6 +127,26 @@ button:active {
   flex: 1;
   text-align: right;
   color: var(--color-font-2);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes button-clicked {

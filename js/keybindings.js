@@ -86,7 +86,13 @@ const KeyBindings = (() => {
   }
 
   function hideKeybindingList() {
-    container.classList.remove("visible");
+    const hideAfterAnimation = () => {
+      container.classList.remove("visible", "fade-out");
+      container.removeEventListener("animationend", hideAfterAnimation);
+    };
+
+    container.classList.add("fade-out");
+    container.addEventListener("animationend", hideAfterAnimation);
   }
 
   return {
