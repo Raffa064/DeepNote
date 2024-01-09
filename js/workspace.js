@@ -256,37 +256,46 @@ function goBack() {
 }
 
 function setupKeyBindings() {
-  setKey({ which: "b", ctrl: true }, goBack);
-  setKey({ which: "n", ctrl: true }, addNewCard);
-  setKey({ which: "e", ctrl: true }, toggleExpandedDescription);
-  setKey({ which: "l", ctrl: true }, toggleListSelection);
-
-  setKey({ which: "m", ctrl: true }, () => {
-    cardCheckbox.click();
-  });
+  const { setKey } = KeyBindings;
 
   setKey({ which: "h", ctrl: true }, () => {
     window.location.replace("index.html");
-  });
+  }).label("Go Home");
+
+  setKey({ which: "m", ctrl: true }, () => {
+    cardCheckbox.click();
+  }).label("Check/Uncheck");
+
+  setKey({ which: "e", ctrl: true }, toggleExpandedDescription).label(
+    "Expand description",
+  );
+
+  setKey({ which: "b", ctrl: true }, goBack).label("Go Back");
+
+  setKey({ which: "n", ctrl: true }, addNewCard).label("New Card");
+
+  setKey({ which: "l", ctrl: true }, toggleListSelection).label(
+    "Selection mode",
+  );
 
   setKey({ which: "ArrowUp", manualEventLocker: true }, (evt) => {
     if (cardChildrenList.classList.contains("selection")) {
       evt.preventDefault();
       cardChildrenList.backSelection();
     }
-  });
+  }).label("Selection up");
 
   setKey({ which: "ArrowDown", manualEventLocker: true }, (evt) => {
     if (cardChildrenList.classList.contains("selection")) {
       evt.preventDefault();
       cardChildrenList.nextSelection();
     }
-  });
+  }).label("Selection down");
 
   setKey({ which: "Enter", manualEventLocker: true }, (evt) => {
     if (cardChildrenList.classList.contains("selection")) {
       evt.preventDefault();
       cardChildrenList.openSelection();
     }
-  });
+  }).label("Open selection");
 }

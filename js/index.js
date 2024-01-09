@@ -261,9 +261,11 @@ function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
 }
 
 function setupKeyBindings() {
+  const { setKey } = KeyBindings;
+
   setKey({ which: "Tab" }, () => {
     searchInput.focus();
-  });
+  }).label("Focus on input");
 
   setKey({ which: "Enter" }, () => {
     const { matched } = searchWorkspace();
@@ -271,14 +273,14 @@ function setupKeyBindings() {
     if (matched.length > 0) {
       openWorkspace(matched[0].name);
     }
-  });
+  }).label("Enter workspace");
 
   setKey({ which: "c", ctrl: true }, () => {
     modal.close();
-  });
+  }).label("Close modal");
 
   setKey({ which: "n", ctrl: true }, () => {
     workspaceCreateButton.click();
     modal.setInput(searchInput.value, "Workspace name");
-  });
+  }).label("New workspace");
 }

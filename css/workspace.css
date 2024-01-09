@@ -13,11 +13,12 @@ header {
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 header #workspace-name {
+  flex: 1;
   color: var(--color-font-1);
   font-size: 25px;
 }
