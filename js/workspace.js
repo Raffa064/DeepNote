@@ -191,7 +191,10 @@ function toggleListSelection() {
 
       selectedElt = cardChildrenList.children.item(selectedIndex);
       selectedElt.classList.add("selected");
-      selectedElt.scrollIntoView();
+      selectedElt.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
 
     select();

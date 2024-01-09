@@ -126,6 +126,7 @@ header #home:active {
   z-index: 5;
   transition: 0.2s;
   animation: stretch 0.3s ease;
+  overflow-y: scroll;
 }
 
 #card-list.selection::before {
