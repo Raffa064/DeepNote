@@ -246,6 +246,10 @@ input[type="checkbox"]:disabled:hover::after {
   z-index: 10;
 }
 
+li input[type="checkbox"]:disabled:hover::after {
+  content: "You should open it before check!";
+}
+
 #card-buttons-container {
   width: 100%;
   max-width: 800px;
