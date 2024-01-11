@@ -10,6 +10,7 @@ body {
 }
 
 #container {
+  width: 100%;
   display: block;
   max-width: 800px;
   margin: auto;
@@ -88,7 +89,7 @@ body {
 #workspace-create {
   position: fixed;
   bottom: 10px;
-  right: 10px;
+  right: calc(50vw - min(400px, 50vw) + 10px); /* aligned with #container */
   padding: 10px;
   border-radius: 4px;
   background: var(--color-accent);
