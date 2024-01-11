@@ -153,7 +153,9 @@ header #home:active {
   margin-bottom: 5px;
   border-radius: 5px;
   cursor: pointer;
+  opacity: 1;
   transition: background 0.5s;
+  transition: opacity 0.2s;
   position: relative;
 }
 
@@ -188,6 +190,10 @@ header #home:active {
   bottom: 5px;
   font-size: 14px;
   color: var(--color-font-2);
+}
+
+#card-list li.ghost {
+  opacity: 0.5;
 }
 
 #card-list li#card-no-children {

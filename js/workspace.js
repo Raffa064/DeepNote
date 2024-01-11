@@ -33,6 +33,7 @@ cardDescriptionColapse.onclick = toggleExpandedDescription;
 Sortable.create(cardChildrenList, {
   handle: ".handler",
   animation: 150,
+  ghostClass: "ghost",
   onEnd: function (evt) {
     const len = current.children.length - 1;
     var movedChild = current.children.splice(len - evt.oldIndex, 1)[0];
