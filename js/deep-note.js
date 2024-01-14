@@ -140,6 +140,7 @@ DeepNote = (() => {
       workspace = {
         name,
         content: root.json(),
+        root,
       };
     } else {
       workspace = name;
