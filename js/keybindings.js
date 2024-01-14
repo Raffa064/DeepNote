@@ -47,6 +47,13 @@ const KeyBindings = (() => {
         command(evt);
       }
     });
+
+    return {
+      hide: () => {
+        const index = KEY_BINDINGS.indexOf(keybinding);
+        KEY_BINDINGS.splice(index, 1);
+      },
+    };
   }
 
   function getKeySymbol(key = DEFAULT_KEY_OBJECT) {
