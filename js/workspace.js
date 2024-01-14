@@ -1,9 +1,8 @@
-// Imports and Shortcuts
+// Imports
 const { loadWorkspace, createCard } = DeepNote;
-const { WORKSPACE_NAME } = getParams();
-const { getElementById } = document;
 
-// Constantants
+// Constants
+const { WORKSPACE_NAME } = getParams();
 const AUTO_SAVE_DELAY = 500;
 const DELETION_HOLD_DELAY = 2000;
 
@@ -22,7 +21,7 @@ const cardButtonDown = getElementById("card-button-down");
 
 // Application state (dinamic/data)
 const workspace = loadWorkspace(WORKSPACE_NAME);
-const current = workspace.root;
+var current = workspace.root;
 const selectionMode = createSelectionMode();
 
 mainSetup();
@@ -126,6 +125,8 @@ function createSelectionMode() {
     selectedIndex = 0;
     moveSelection();
   };
+
+  return selectionMode;
 }
 
 function toggleSelectionMode() {
@@ -146,102 +147,107 @@ function toggleSelectionMode() {
 }
 
 function renderCard() {
+  // Openning animation
   cardContainer.classList.add("anim-stretch");
   cardContainer.onanimationend = function () {
     cardContainer.classList.remove("anim-stretch");
   };
 
-  current.verifyChecked();
-  cardCheckbox.checked = current.checked;
+  cardCheckbox.checked = current.isChecked();
   cardCheckbox.disabled = current.hasChildren();
-  cardTitleInput.value = current.title;
-  cardDescriptionInput.value = current.description;
+  cardTitleInput.value = current.getTitle();
+  cardDescriptionInput.value = current.getDescription();
 
   cardCheckbox.onchange = function () {
-    current.checked = cardCheckbox.checked;
+    const checked = current.setChecked(cardCheckbox.checked);
+    cardCheckbox.checked = checked;
   };
 
   cardTitleInput.oninput = function () {
-    current.title = cardTitleInput.value;
+    current.setTitle(cardTitleInput.value);
   };
 
   cardDescriptionInput.oninput = function () {
-    current.description = cardDescriptionInput.value;
+    current.setDescription(cardDescriptionInput.value);
   };
 
   cardChildrenList.innerHTML = "";
-  if (current.children.length > 0) {
+  if (current.hasChildren()) {
     current.children.forEach(function (child) {
-      var listItem = document.createElement("li");
-
-      var totalChildren = child.children.length;
-      if (totalChildren > 0) {
-        var checkedChildren = child.children.reduce((prev, curr) => {
-          return curr.checked ? prev + 1 : prev;
-        }, 0);
-
-        listItem.dataset.counter = checkedChildren + "/" + totalChildren;
-      }
-
-      var childCheckbox = document.createElement("input");
-      childCheckbox.classList.add("handler");
-      childCheckbox.type = "checkbox";
-      childCheckbox.disabled = true;
-      childCheckbox.checked = child.checked;
-      listItem.appendChild(childCheckbox);
-
-      var childTitle = document.createElement("span");
-      childTitle.innerText = child.title;
-      listItem.appendChild(childTitle);
-
-      listItem.onclick = function () {
-        current = child;
-        renderCard(current);
-      };
-
-      var warningTimeout;
-      var deleteTimeout;
-      listItem.ontouchstart = function () {
-        warningTimeout = setTimeout(() => {
-          listItem.classList.add("deleting");
-        }, 100);
-
-        deleteTimeout = setTimeout(() => {
-          listItem.classList.add("anim-scale-down");
-          setTimeout(() => {
-            current.removeChild(child);
-            cardCheckbox.disabled = current.hasChildren();
-            listItem.remove();
-          }, 200);
-        }, DELETION_HOLD_DELAY);
-      };
-
-      const cancelDeletion = function () {
-        listItem.classList.remove("deleting");
-        clearTimeout(warningTimeout);
-        clearTimeout(deleteTimeout);
-      };
-
-      listItem.ontouchmove = cancelDeletion;
-      listItem.ontouchend = cancelDeletion;
-
+      const listItem = renderChildCard(child);
       cardChildrenList.insertBefore(listItem, cardChildrenList.firstChild);
     });
 
-    if (cardChildrenList.classList.contains("selection")) {
-      cardChildrenList.resetSelection();
-    }
+    selectionMode.resetSelection();
   } else {
-    const cardNoChildren = document.createElement("li");
-    cardNoChildren.id = "card-no-children";
-    cardNoChildren.textContent =
-      "This card has no children. You can add a new subcard by pressing arrow down button.";
-    cardChildrenList.appendChild(cardNoChildren);
+    const noChildren = document.createElement("li");
+    noChildren.id = "card-no-children";
+    noChildren.textContent =
+      "Create a new child card with the arrow down button.";
+    cardChildrenList.appendChild(noChildren);
 
-    if (cardChildrenList.classList.contains("selection")) {
-      toggleListSelection();
+    if (isSelectionModeEnabled()) {
+      toggleListSelection(); // disable selection mode
     }
   }
+}
+
+function renderChildCard(child) {
+  // Need to refactory
+  var listItem = document.createElement("li");
+
+  var totalChildren = child.children.length;
+  if (totalChildren > 0) {
+    var checkedChildren = child.children.reduce((prev, curr) => {
+      return curr.checked ? prev + 1 : prev;
+    }, 0);
+
+    listItem.dataset.counter = checkedChildren + "/" + totalChildren;
+  }
+
+  var childCheckbox = document.createElement("input");
+  childCheckbox.classList.add("handler");
+  childCheckbox.type = "checkbox";
+  childCheckbox.disabled = true;
+  childCheckbox.checked = child.checked;
+  listItem.appendChild(childCheckbox);
+
+  var childTitle = document.createElement("span");
+  childTitle.innerText = child.title;
+  listItem.appendChild(childTitle);
+
+  listItem.onclick = function () {
+    current = child;
+    renderCard(current);
+  };
+
+  var warningTimeout;
+  var deleteTimeout;
+  listItem.ontouchstart = function () {
+    warningTimeout = setTimeout(() => {
+      listItem.classList.add("deleting");
+    }, 100);
+
+    deleteTimeout = setTimeout(() => {
+      listItem.classList.add("anim-scale-down");
+      setTimeout(() => {
+        current.removeChild(child);
+        cardCheckbox.disabled = current.hasChildren();
+        listItem.remove();
+      }, 200);
+    }, DELETION_HOLD_DELAY);
+  };
+
+  const cancelDeletion = function () {
+    listItem.classList.remove("deleting");
+    clearTimeout(warningTimeout);
+    clearTimeout(deleteTimeout);
+  };
+
+  listItem.ontouchmove = cancelDeletion;
+  listItem.ontouchend = cancelDeletion;
+
+  return listItem;
 }
 
 function addNewCard() {
@@ -316,4 +322,8 @@ function getParams() {
   }
 
   return params;
+}
+
+function getElementById(id) {
+  return document.getElementById(id);
 }
