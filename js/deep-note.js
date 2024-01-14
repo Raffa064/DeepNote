@@ -85,7 +85,7 @@ DeepNote = (() => {
     };
 
     card.addChild = (childCard) => {
-      childCard.parent = this;
+      childCard.parent = card;
       card.children.push(childCard);
     };
 
@@ -107,6 +107,8 @@ DeepNote = (() => {
     card.children = card.children.map((childCard) => {
       createCard(childCard); // inject functions
       childCard.parent = card;
+
+      return childCard;
     });
 
     return card;
@@ -126,6 +128,8 @@ DeepNote = (() => {
     }
 
     workspace.save = () => {
+      workspace.content = workspace.root.json();
+
       const index = data.indexOf(workspace);
 
       if (index < 0) {
