@@ -247,6 +247,7 @@ function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
       .toLowerCase()
       .trim()
       .includes(searchQuery.toLowerCase().trim());
+
     matcherCallback(name, workspaceItem, match);
 
     if (match) {
