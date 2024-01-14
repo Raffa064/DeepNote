@@ -153,11 +153,13 @@ function renderCard() {
     cardContainer.classList.remove("anim-stretch");
   };
 
+  // Display values
   cardCheckbox.checked = current.isChecked();
   cardCheckbox.disabled = current.hasChildren();
   cardTitleInput.value = current.getTitle();
   cardDescriptionInput.value = current.getDescription();
 
+  // Interations
   cardCheckbox.onchange = function () {
     const checked = current.setChecked(cardCheckbox.checked);
     cardCheckbox.checked = checked;
@@ -171,6 +173,7 @@ function renderCard() {
     current.setDescription(cardDescriptionInput.value);
   };
 
+  // Child card list
   cardChildrenList.innerHTML = "";
   if (current.hasChildren()) {
     current.children.forEach(function (child) {
@@ -193,61 +196,64 @@ function renderCard() {
 }
 
 function renderChildCard(child) {
-  // Need to refactory
-  var listItem = document.createElement("li");
-
-  var totalChildren = child.children.length;
-  if (totalChildren > 0) {
-    var checkedChildren = child.children.reduce((prev, curr) => {
-      return curr.checked ? prev + 1 : prev;
-    }, 0);
-
-    listItem.dataset.counter = checkedChildren + "/" + totalChildren;
-  }
-
+  // Instanciating elements
+  var childItem = document.createElement("li");
   var childCheckbox = document.createElement("input");
+  var childTitle = document.createElement("span");
+
+  // Display values
   childCheckbox.classList.add("handler");
   childCheckbox.type = "checkbox";
   childCheckbox.disabled = true;
   childCheckbox.checked = child.checked;
-  listItem.appendChild(childCheckbox);
-
-  var childTitle = document.createElement("span");
   childTitle.innerText = child.title;
-  listItem.appendChild(childTitle);
 
-  listItem.onclick = function () {
+  // Completion counter
+  if (card.hasChildren()) {
+    const childrenCount = card.getChildren();
+    const checkedChildrenCount = card.getCheckedChildrenCount();
+
+    childItem.dataset.counter = checkedChildrenCount + "/" + childrenCount;
+  }
+
+  // Interations
+  childItem.onclick = function () {
     current = child;
     renderCard(current);
   };
 
   var warningTimeout;
   var deleteTimeout;
-  listItem.ontouchstart = function () {
+
+  childItem.ontouchstart = function () {
     warningTimeout = setTimeout(() => {
-      listItem.classList.add("deleting");
+      childItem.classList.add("deleting"); // display deletion warning
     }, 100);
 
     deleteTimeout = setTimeout(() => {
-      listItem.classList.add("anim-scale-down");
+      childItem.classList.add("anim-scale-down"); // deleting animation
+
       setTimeout(() => {
         current.removeChild(child);
         cardCheckbox.disabled = current.hasChildren();
-        listItem.remove();
+        childItem.remove();
       }, 200);
     }, DELETION_HOLD_DELAY);
   };
 
   const cancelDeletion = function () {
-    listItem.classList.remove("deleting");
+    childItem.classList.remove("deleting");
     clearTimeout(warningTimeout);
     clearTimeout(deleteTimeout);
   };
 
-  listItem.ontouchmove = cancelDeletion;
-  listItem.ontouchend = cancelDeletion;
+  childItem.ontouchmove = cancelDeletion;
+  childItem.ontouchend = cancelDeletion;
 
-  return listItem;
+  childItem.appendChild(childCheckbox);
+  childItem.appendChild(childTitle);
+
+  return childItem;
 }
 
 function addNewCard() {

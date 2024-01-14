@@ -105,6 +105,17 @@ DeepNote = (() => {
       return childCard;
     };
 
+    card.getChildrenCount = () => {
+      return card.children.length;
+    };
+
+    card.getCheckedChildrenCount = () => {
+      return card.children.reduce((prev, curr) => {
+        if (curr.checked) prev++;
+        return prev;
+      }, 0);
+    };
+
     card.json = () => {
       return JSON.stringify(card, (key, value) => {
         return key === "parent" ? undefined : value; // Prevent circular structure
