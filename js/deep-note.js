@@ -12,6 +12,7 @@ DeepNote = (() => {
 
   // Update workspaces from old versions
   data.forEach((workspace) => {
+    console.log("CompPatch: " + workspace.name);
     if (workspace.dnVersion === undefined) {
       // Compatibility patch: new content structure
       const root = JSON.parse(workspace.content);
