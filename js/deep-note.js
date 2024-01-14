@@ -1,4 +1,6 @@
 DeepNote = (() => {
+  const DN_VERSION = 2;
+
   // Compatibility patch: Update storage structure
   if (localStorage.dnCoreVersion) {
     delete localStorage.dnCoreVersion;
@@ -7,6 +9,20 @@ DeepNote = (() => {
   }
 
   const data = loadData();
+
+  // Update workspaces from old versions
+  data.forEach((workspace) => {
+    if (workspace.dnVersion === undefined) {
+      // Compatibility patch: new content structure
+      const root = JSON.parse(workspace.content);
+      const content = {
+        root,
+        clipboard: [],
+      };
+
+      workspace.content = JSON.stringify(content);
+    }
+  });
 
   function loadData() {
     const dataJson = localStorage.dn_data; // Workspce list
@@ -133,17 +149,31 @@ DeepNote = (() => {
 
     if (typeof name === "string") {
       const root = createCard(false, "", "", []);
+      const clipboard = [];
+
       workspace = {
+        dnVersion: DN_VERSION,
         name,
-        content: root.json(),
         root,
+        clipboard,
       };
     } else {
       workspace = name;
     }
 
     workspace.save = () => {
-      workspace.content = workspace.root.json();
+      const content = {
+        root: workspace.root,
+        clipboard: workspace.clipboard || [],
+      };
+
+      workspace.content = JSON.stringify(content, (key, value) => {
+        if (key === "parent") {
+          return undefined;
+        }
+
+        return value;
+      });
 
       const index = data.indexOf(workspace);
 
@@ -174,11 +204,15 @@ DeepNote = (() => {
     const workspace = data.find((w) => w.name === name);
 
     if (workspace !== undefined) {
-      const rootJson = workspace.content;
-      const rootParsed = JSON.parse(rootJson);
-      const root = createCard(rootParsed);
+      const contentJson = workspace.content;
+      const content = JSON.parse(contentJson);
+      const root = createCard(content.root);
+      const clipboard = content.clipboard.map((card) => {
+        return createCard(card);
+      });
 
       workspace.root = root;
+      workspace.clipboard = clipboard;
       return createWorkspace(workspace); // inject functions
     }
 
