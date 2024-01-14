@@ -21,10 +21,7 @@ DeepNote = (() => {
         clipboard: [],
       };
 
-<<<<<<< Updated upstream
-=======
       workspace.dnVersion = DN_VERSION;
->>>>>>> Stashed changes
       workspace.content = JSON.stringify(content);
     }
   });
