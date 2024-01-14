@@ -279,44 +279,60 @@ function goHome() {
 function setupKeyBindings() {
   const { setKey } = KeyBindings;
 
-  setKey({ which: "h", ctrl: true }, goHome).label("Go Home");
+  setKey({ which: "h", ctrl: true }, goHome, "Go Home");
 
-  setKey({ which: "m", ctrl: true }, () => {
-    cardCheckbox.click();
-  }).label("Check/Uncheck");
+  setKey(
+    { which: "m", ctrl: true },
+    () => {
+      cardCheckbox.click();
+    },
+    "Check/Uncheck",
+  );
 
-  setKey({ which: "e", ctrl: true }, toggleExpandedDescription).label(
+  setKey(
+    { which: "e", ctrl: true },
+    toggleExpandedDescription,
     "Expand description",
   );
 
-  setKey({ which: "b", ctrl: true }, goBack).label("Go Back");
+  setKey({ which: "b", ctrl: true }, goBack, "Go Back");
 
-  setKey({ which: "n", ctrl: true }, addNewCard).label("New Card");
+  setKey({ which: "n", ctrl: true }, addNewCard, "New Card");
 
-  setKey({ which: "l", ctrl: true }, toggleSelectionMode).label(
-    "Selection mode",
+  setKey({ which: "l", ctrl: true }, toggleSelectionMode, "Selection mode");
+
+  setKey(
+    { which: "ArrowUp", manualEventLocker: true },
+    (evt) => {
+      if (isSelectionModeEnabled()) {
+        evt.preventDefault();
+        selectionMode.backSelection();
+      }
+    },
+    "Selection up",
   );
 
-  setKey({ which: "ArrowUp", manualEventLocker: true }, (evt) => {
-    if (isSelectionModeEnabled()) {
-      evt.preventDefault();
-      selectionMode.backSelection();
-    }
-  }).label("Selection up");
+  setKey(
+    { which: "ArrowDown", manualEventLocker: true },
+    (evt) => {
+      if (isSelectionModeEnabled()) {
+        evt.preventDefault();
+        selectionMode.nextSelection();
+      }
+    },
+    "Selection down",
+  );
 
-  setKey({ which: "ArrowDown", manualEventLocker: true }, (evt) => {
-    if (isSelectionModeEnabled()) {
-      evt.preventDefault();
-      selectionMode.nextSelection();
-    }
-  }).label("Selection down");
-
-  setKey({ which: "Enter", manualEventLocker: true }, (evt) => {
-    if (isSelectionModeEnabled()) {
-      evt.preventDefault();
-      selectionMode.openSelection();
-    }
-  }).label("Open selection");
+  setKey(
+    { which: "Enter", manualEventLocker: true },
+    (evt) => {
+      if (isSelectionModeEnabled()) {
+        evt.preventDefault();
+        selectionMode.openSelection();
+      }
+    },
+    "Open selection",
+  );
 }
 
 function onMenuOptionClick(id) {

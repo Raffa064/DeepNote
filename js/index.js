@@ -263,26 +263,42 @@ function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
 function setupKeyBindings() {
   const { setKey } = KeyBindings;
 
-  setKey({ which: "Tab" }, () => {
-    searchInput.focus();
-  }).label("Focus on input");
+  setKey(
+    { which: "Tab" },
+    () => {
+      searchInput.focus();
+    },
+    "Focus on input",
+  );
 
-  setKey({ which: "Enter" }, () => {
-    const { matched } = searchWorkspace();
+  setKey(
+    { which: "Enter" },
+    () => {
+      const { matched } = searchWorkspace();
 
-    if (matched.length > 0) {
-      openWorkspace(matched[0].name);
-    }
-  }).label("Enter workspace");
+      if (matched.length > 0) {
+        openWorkspace(matched[0].name);
+      }
+    },
+    "Enter workspace",
+  );
 
-  setKey({ which: "c", ctrl: true }, () => {
-    modal.close();
-  }).label("Close modal");
+  setKey(
+    { which: "c", ctrl: true },
+    () => {
+      modal.close();
+    },
+    "Close modal",
+  );
 
-  setKey({ which: "n", ctrl: true }, () => {
-    workspaceCreateButton.click();
-    modal.setInput(searchInput.value, "Workspace name");
-  }).label("New workspace");
+  setKey(
+    { which: "n", ctrl: true },
+    () => {
+      workspaceCreateButton.click();
+      modal.setInput(searchInput.value, "Workspace name");
+    },
+    "New workspace",
+  );
 }
 
 function onMenuOptionClick(id) {

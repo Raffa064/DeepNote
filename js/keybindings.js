@@ -1,6 +1,7 @@
 const KeyBindings = (() => {
-  const KEY_BINDINGS = [];
+  const KEY_BINDINGS = []; // Current page key bindings
 
+  // Floating window Elements
   const container = document.createElement("div");
   const title = document.createElement("h1");
   const list = document.createElement("ul");
@@ -15,11 +16,20 @@ const KeyBindings = (() => {
 
   document.body.appendChild(container);
 
-  function setKey(key, command) {
+  const DEFAULT_KEY_OBJECT = {
+    which: "",
+    ctrl: false,
+    alt: false,
+    shift: false,
+    manualEventLocker: false,
+  };
+
+  function setKey(key = DEFAULT_KEY_OBJECT, command, label) {
+    // Function used to setup a keybinding
     const keybinding = {
       key,
       command,
-      label: "",
+      label,
     };
 
     KEY_BINDINGS.push(keybinding);
@@ -37,13 +47,9 @@ const KeyBindings = (() => {
         command(evt);
       }
     });
-
-    return {
-      label: (label) => (keybinding.label = label),
-    };
   }
 
-  function getKeySymbol(key) {
+  function getKeySymbol(key = DEFAULT_KEY_OBJECT) {
     var symbol = "";
 
     if (key.ctrl) symbol += "Ctrl+";
@@ -53,24 +59,34 @@ const KeyBindings = (() => {
     return symbol + key.which;
   }
 
+  function renderKeybinding(keybinding) {
+    const item = document.createElement("li");
+    const keys = document.createElement("span");
+    const label = document.createElement("span");
+
+    item.classList.add("keybinding");
+    keys.classList.add("keybinding-keys");
+    keys.innerText = getKeySymbol(keybinding.key);
+    label.classList.add("keybinding-label");
+    label.innerText = keybinding.label;
+
+    item.appendChild(keys);
+    item.appendChild(label);
+
+    return item;
+  }
+
   function showKeyBindingList() {
+    if (container.classList.contains("visible")) {
+      return;
+    }
+
     container.classList.add("visible");
 
     list.innerHTML = "";
     KEY_BINDINGS.forEach((keybinding) => {
-      const item = document.createElement("li");
-      const keys = document.createElement("span");
-      const label = document.createElement("span");
-
-      item.classList.add("keybinding");
-      keys.classList.add("keybinding-keys");
-      keys.innerText = getKeySymbol(keybinding.key);
-      label.classList.add("keybinding-label");
-      label.innerText = keybinding.label;
-
-      item.appendChild(keys);
-      item.appendChild(label);
-      list.appendChild(item);
+      const keybindingItem = renderKeybinding(keybinding);
+      list.appendChild(keybindingItem);
     });
 
     const closeHandler = (evt) => {
