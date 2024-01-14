@@ -209,7 +209,7 @@ function renderChildCard(child) {
   childTitle.innerText = child.title;
 
   // Completion counter
-  if (card.hasChildren()) {
+  if (child.hasChildren()) {
     const childrenCount = card.getChildren();
     const checkedChildrenCount = card.getCheckedChildrenCount();
 
