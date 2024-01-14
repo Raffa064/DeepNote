@@ -142,7 +142,7 @@ function toggleSelectionMode() {
     selectionMode.resetSelection();
   } else {
     document.body.style.overflow = "scroll";
-    selection.unselect();
+    selectionMode.unselect();
   }
 }
 
@@ -190,7 +190,7 @@ function renderCard() {
     cardChildrenList.appendChild(noChildren);
 
     if (isSelectionModeEnabled()) {
-      toggleListSelection(); // disable selection mode
+      toggleSelectionMode(); // disable selection mode
     }
   }
 }
@@ -205,13 +205,13 @@ function renderChildCard(child) {
   childCheckbox.classList.add("handler");
   childCheckbox.type = "checkbox";
   childCheckbox.disabled = true;
-  childCheckbox.checked = child.checked;
-  childTitle.innerText = child.title;
+  childCheckbox.checked = child.isChecked();
+  childTitle.innerText = child.getTitle();
 
   // Completion counter
   if (child.hasChildren()) {
-    const childrenCount = card.getChildren();
-    const checkedChildrenCount = card.getCheckedChildrenCount();
+    const childrenCount = child.getChildrenCount();
+    const checkedChildrenCount = child.getCheckedChildrenCount();
 
     childItem.dataset.counter = checkedChildrenCount + "/" + childrenCount;
   }
@@ -305,7 +305,7 @@ function setupKeyBindings() {
   setKey({ which: "ArrowDown", manualEventLocker: true }, (evt) => {
     if (isSelectionModeEnabled()) {
       evt.preventDefault();
-      selection.nextSelection();
+      selectionMode.nextSelection();
     }
   }).label("Selection down");
 

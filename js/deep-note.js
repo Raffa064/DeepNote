@@ -56,15 +56,11 @@ DeepNote = (() => {
     };
 
     card.isChecked = () => {
-      const verifyChildrenChecked = () => {
-        const uncheckedChild = card.children.find((childCard) => {
-          return childCard.checked === false;
-        });
-
-        return uncheckedChild !== undefined;
+      const isAllChildrenChecked = () => {
+        return card.getChildrenCount() === card.getCheckedChildrenCount();
       };
 
-      return !card.hasChildren() ? card.checked : verifyChildrenChecked();
+      return card.hasChildren() ? isAllChildrenChecked() : card.checked;
     };
 
     card.setTitle = (title) => {
@@ -111,7 +107,7 @@ DeepNote = (() => {
 
     card.getCheckedChildrenCount = () => {
       return card.children.reduce((prev, curr) => {
-        if (curr.checked) prev++;
+        if (curr.isChecked()) prev++;
         return prev;
       }, 0);
     };
