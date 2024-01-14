@@ -43,7 +43,11 @@ DeepNote = (() => {
 
   function save() {
     const dataJson = JSON.stringify(data, (key, value) => {
-      return key === "root" ? undefined : value; // Prevent circular structure
+      if (key === "root" || key === "clipboard") {
+        return undefined;
+      }
+
+      return value;
     });
 
     localStorage.dn_data = dataJson;
