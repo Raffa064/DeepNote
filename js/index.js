@@ -284,3 +284,11 @@ function setupKeyBindings() {
     modal.setInput(searchInput.value, "Workspace name");
   }).label("New workspace");
 }
+
+function onMenuOptionClick(id) {
+  switch (id) {
+    case "show-keybindings":
+      KeyBindings.showKeyBindingList();
+      break;
+  }
+}

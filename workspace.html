@@ -16,7 +16,8 @@
       <header>
         <h1 id="workspace-name"></h1>
         <button
-          onclick="KeyBindings.showKeyBindingList()"
+          id="show-keybindings"
+          onclick="onMenuOptionClick(this.id)"
           style="background: transparent"
         >
           <svg
@@ -32,7 +33,11 @@
             <path d="M0 0h24v24H0zm0 0h24v24H0z" fill="none" />
           </svg>
         </button>
-        <a id="home" href="./index.html">
+        <button
+          id="go-home"
+          onclick="onMenuOptionClick(this.id)"
+          style="background: transparent"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -48,7 +53,7 @@
               d="M12 2 L2 12 L5 12 L5 22 L10 22 L10 15 L15 15 L15 22 L19 22 L19 12 L22 12 L12 2 Z"
             />
           </svg>
-        </a>
+        </button>
       </header>
       <div id="card-header">
         <input type="checkbox" id="card-checkbox" />

@@ -272,12 +272,14 @@ function goBack() {
   }
 }
 
+function goHome() {
+  window.location.replace("index.html");
+}
+
 function setupKeyBindings() {
   const { setKey } = KeyBindings;
 
-  setKey({ which: "h", ctrl: true }, () => {
-    window.location.replace("index.html");
-  }).label("Go Home");
+  setKey({ which: "h", ctrl: true }, goHome).label("Go Home");
 
   setKey({ which: "m", ctrl: true }, () => {
     cardCheckbox.click();
@@ -315,6 +317,17 @@ function setupKeyBindings() {
       selectionMode.openSelection();
     }
   }).label("Open selection");
+}
+
+function onMenuOptionClick(id) {
+  switch (id) {
+    case "show-keybindings":
+      KeyBindings.showKeyBindingList();
+      break;
+    case "go-home":
+      goHome();
+      break;
+  }
 }
 
 function getParams() {
