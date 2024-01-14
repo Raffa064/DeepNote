@@ -2,7 +2,7 @@ const Debug = (() => {
   var DEBUG = false;
 
   var erudaScript = document.createElement("script");
-  erudaScript.src = "https//cdn.jsdelivr.net/npm/eruda";
+  erudaScript.src = "https://cdn.jsdelivr.net/npm/eruda";
   document.body.appendChild(erudaScript);
 
   erudaScript.onload = setupDebug;
