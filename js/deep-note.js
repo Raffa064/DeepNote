@@ -1,4 +1,11 @@
 DeepNote = (() => {
+  // Compatibility patch: Update storage structure
+  if (localStorage.dnCoreVersion) {
+    delete localStorage.dnCoreVersion;
+    localStorage.dn_data = localStorage.deep_note;
+    delete localStorage.deep_note;
+  }
+
   const data = loadData();
 
   function loadData() {
