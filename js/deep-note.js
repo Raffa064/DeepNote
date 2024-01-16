@@ -59,6 +59,15 @@ DeepNote = (() => {
 
     if (typeof checked === "object") {
       card = checked;
+
+      if (card == null) {
+        return createCard(
+          false,
+          "⚠️ Corrupted card",
+          "Sorry, but this card has been corrupted and can't be recovered.",
+          [],
+        );
+      }
     } else {
       card = {
         checked,
@@ -146,7 +155,7 @@ DeepNote = (() => {
     };
 
     card.children = card.children.map((childCard) => {
-      createCard(childCard); // inject functions
+      childCard = createCard(childCard); // inject functions
       childCard.parent = card;
 
       return childCard;
