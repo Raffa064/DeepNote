@@ -109,9 +109,14 @@ DeepNote = (() => {
       return card.children;
     };
 
-    card.addChild = (childCard) => {
+    card.addChild = (childCard, index) => {
       childCard.parent = card;
-      card.children.push(childCard);
+
+      if (index === undefined) {
+        card.children.push(childCard);
+      } else {
+        card.children.splice(index, 0, childCard);
+      }
     };
 
     card.removeChild = (childCard) => {

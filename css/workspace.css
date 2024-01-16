@@ -108,7 +108,21 @@ header #home:active {
   font-family: monospace;
 }
 
+#clipboard-list {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  outline: 1px solid var(--color-accent);
+}
+
+#clipboard-list:before {
+  display: block;
+  content: 'Clipboard';
+  text-align: center;
+}
+
 #card-list {
+  min-height 30px;
   list-style: none;
   padding: 0;
   padding-bottom: 60px;
@@ -139,11 +153,11 @@ header #home:active {
   font-weight: bold;
 }
 
-#card-list.selection li.selected {
+#card-list.selection .child-card.selected {
   outline: 2px solid var(--color-accent);
 }
 
-#card-list li {
+.child-card {
   height: 40px;
   display: flex;
   align-items: center;
@@ -159,16 +173,16 @@ header #home:active {
   position: relative;
 }
 
-#card-list li.deleting:not(.dragging) {
+.child-card.deleting:not(.dragging) {
   position: relative;
   background: var(--color-error);
 }
 
-#card-list li.deleting:not(.dragging) * {
+.child-card.deleting:not(.dragging) * {
   display: none;
 }
 
-#card-list li.deleting:not(.dragging)::after {
+.child-card.deleting:not(.dragging)::after {
   content: "This card will be deleted!";
   position: absolute;
   top: 50%;
@@ -178,12 +192,12 @@ header #home:active {
   font-weight: bold;
 }
 
-#card-list li span {
+.child-card span {
   flex: 1;
   overflow: hidden;
 }
 
-#card-list li:not(.deleting)::before {
+.child-card:not(.deleting)::before {
   content: attr(data-counter);
   position: absolute;
   right: 5px;
@@ -192,14 +206,19 @@ header #home:active {
   color: var(--color-font-2);
 }
 
-#card-list li.ghost {
+.child-card.ghost {
   opacity: 0.5;
 }
 
-#card-list li#card-no-children {
+#card-no-children {
+  display: block;
   padding: 10px;
+  margin-top: 10px;
   background: var(--color-bg-3);
   color: var(--color-font-2);
+  border-radius: 4px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 input[type="checkbox"] {

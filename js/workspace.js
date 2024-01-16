@@ -15,6 +15,7 @@ const cardDescriptionContainer = getElementById("card-description-container");
 const cardDescriptionExpand = getElementById("card-description-expand");
 const cardDescriptionColapse = getElementById("card-description-colapse");
 const cardDescriptionInput = getElementById("card-description");
+const clipboardList = getElementById("clipboard-list");
 const cardChildrenList = getElementById("card-list");
 const cardButtonUp = getElementById("card-button-up");
 const cardButtonDown = getElementById("card-button-down");
@@ -34,15 +35,72 @@ function mainSetup() {
   cardButtonDown.onclick = addNewCard;
   cardButtonUp.onclick = goBack;
 
-  Sortable.create(cardChildrenList, {
+  const CARD_LISTS = {
+    "clipboard-list": {
+      from: (index) => {
+        return workspace.clipboard.splice(index, 1)[0];
+      },
+      to: (index, card) => {
+        workspace.clipboard.splice(index, 0, card);
+      },
+    },
+    "card-list": {
+      from: (index) => {
+        const len = current.getChildrenCount() - 1;
+        const children = current.getChildren();
+
+        return children.splice(len - index, 1)[0];
+      },
+      to: (index, card) => {
+        const len = current.getChildrenCount() - 1;
+        current.addChild(card, len - index);
+      },
+    },
+  };
+
+  const sortableOptions = {
+    group: "card-list",
     handle: ".handler",
     animation: 150,
     ghostClass: "ghost",
     onEnd: function (evt) {
-      const len = current.children.length - 1;
-      var movedChild = current.children.splice(len - evt.oldIndex, 1)[0];
-      current.children.splice(len - evt.newIndex, 0, movedChild);
+      const fromList = CARD_LISTS[evt.from.id];
+      const toList = CARD_LISTS[evt.to.id];
+
+      const card = fromList.from(evt.oldIndex);
+      toList.to(evt.newIndex, card);
     },
+  };
+
+  Sortable.create(clipboardList, {
+    ...sortableOptions,
+  });
+
+  Sortable.create(cardChildrenList, {
+    ...sortableOptions,
+  });
+
+  const noChildren = document.createElement("span");
+  noChildren.id = "card-no-children";
+  noChildren.textContent =
+    "Create a new child card with the arrow down button.";
+  cardContainer.insertBefore(noChildren, cardChildrenList);
+
+  const mObjserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        if (cardChildrenList.children.length === 0) {
+          cardContainer.insertBefore(noChildren, cardChildrenList);
+        } else {
+          noChildren.remove();
+        }
+      }
+    });
+  });
+
+  mObjserver.observe(cardChildrenList, {
+    childList: true,
+    subtree: false,
   });
 
   setupKeyBindings();
@@ -173,6 +231,13 @@ function renderCard() {
     current.setDescription(cardDescriptionInput.value);
   };
 
+  // Clipboard
+  clipboardList.innerHTML = "";
+  workspace.clipboard.forEach((card) => {
+    const listItem = renderChildCard(card);
+    clipboardList.appendChild(listItem);
+  });
+
   // Child card list
   cardChildrenList.innerHTML = "";
   if (current.hasChildren()) {
@@ -183,12 +248,6 @@ function renderCard() {
 
     selectionMode.resetSelection();
   } else {
-    const noChildren = document.createElement("li");
-    noChildren.id = "card-no-children";
-    noChildren.textContent =
-      "Create a new child card with the arrow down button.";
-    cardChildrenList.appendChild(noChildren);
-
     if (isSelectionModeEnabled()) {
       toggleSelectionMode(); // disable selection mode
     }
@@ -202,6 +261,7 @@ function renderChildCard(child) {
   var childTitle = document.createElement("span");
 
   // Display values
+  childItem.classList.add("child-card");
   childCheckbox.classList.add("handler");
   childCheckbox.type = "checkbox";
   childCheckbox.disabled = true;
@@ -218,6 +278,8 @@ function renderChildCard(child) {
 
   // Interations
   childItem.onclick = function () {
+    if (childItem.parentNode !== cardChildrenList) return;
+
     current = child;
     renderCard(current);
   };
@@ -226,6 +288,7 @@ function renderChildCard(child) {
   var deleteTimeout;
 
   childItem.ontouchstart = function () {
+    if (childItem.parentNode !== cardChildrenList) return;
     warningTimeout = setTimeout(() => {
       childItem.classList.add("deleting"); // display deletion warning
     }, 100);
@@ -242,6 +305,8 @@ function renderChildCard(child) {
   };
 
   const cancelDeletion = function () {
+    if (childItem.parentNode !== cardChildrenList) return;
+
     childItem.classList.remove("deleting");
     clearTimeout(warningTimeout);
     clearTimeout(deleteTimeout);
