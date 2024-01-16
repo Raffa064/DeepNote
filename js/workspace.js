@@ -63,7 +63,12 @@ function mainSetup() {
     handle: ".handler",
     animation: 150,
     ghostClass: "ghost",
-    onEnd: function (evt) {
+    onStart: (evt) => {
+      clipboardList.classList.add("dragging");
+    },
+    onEnd: (evt) => {
+      clipboardList.classList.remove("dragging");
+
       const fromList = CARD_LISTS[evt.from.id];
       const toList = CARD_LISTS[evt.to.id];
 
@@ -86,26 +91,42 @@ function mainSetup() {
     "Create a new child card with the arrow down button.";
   cardContainer.insertBefore(noChildren, cardChildrenList);
 
-  const mObjserver = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.type === "childList") {
-        if (cardChildrenList.children.length === 0) {
-          cardContainer.insertBefore(noChildren, cardChildrenList);
-        } else {
-          noChildren.remove();
-        }
-      }
-    });
+  createTreeObserver(cardChildrenList, () => {
+    if (cardChildrenList.children.length === 0) {
+      cardContainer.insertBefore(noChildren, cardChildrenList);
+    } else {
+      noChildren.remove();
+    }
   });
 
-  mObjserver.observe(cardChildrenList, {
-    childList: true,
-    subtree: false,
+  createTreeObserver(clipboardList, () => {
+    if (clipboardList.children.length === 0) {
+      clipboardList.classList.add("empty");
+    } else {
+      clipboardList.classList.remove("empty");
+    }
   });
 
   setupKeyBindings();
   renderCard();
   setInterval(workspace.save, AUTO_SAVE_DELAY);
+}
+
+function createTreeObserver(target, callback) {
+  const mObjserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList") {
+        callback();
+      }
+    });
+  });
+
+  mObjserver.observe(target, {
+    childList: true,
+    subtree: false,
+  });
+
+  return mObjserver;
 }
 
 function toggleExpandedDescription() {

@@ -117,12 +117,19 @@ header #home:active {
 
 #clipboard-list:before {
   display: block;
-  content: 'Clipboard';
+  content: "Clipboard";
   text-align: center;
 }
 
+#clipboard-list.empty {
+  display: none;
+}
+
+#clipboard-list.dragging {
+  display: block;
+}
+
 #card-list {
-  min-height 30px;
   list-style: none;
   padding: 0;
   padding-bottom: 60px;
