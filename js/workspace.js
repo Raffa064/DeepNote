@@ -329,7 +329,11 @@ function renderChildCard(child) {
   var warningTimeout;
   var deleteTimeout;
 
-  childItem.ontouchstart = function () {
+  childItem.ontouchstart = function (evt) {
+    if (evt.target === childCheckbox) {
+      return;
+    }
+
     if (childItem.parentNode !== cardChildrenList) return;
     warningTimeout = setTimeout(() => {
       childItem.classList.add("deleting"); // display deletion warning
