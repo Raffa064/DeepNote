@@ -109,10 +109,11 @@ header #home:active {
 }
 
 #clipboard-list {
+  display: none;
   margin-top: 10px;
   padding: 10px;
   border-radius: 4px;
-  outline: 1px solid var(--color-accent);
+  border: 4px solid var(--color-accent);
 }
 
 #clipboard-list:before {
@@ -121,12 +122,16 @@ header #home:active {
   text-align: center;
 }
 
-#clipboard-list.empty {
-  display: none;
+#clipboard-list.dragging,
+#clipboard-list.not-empty {
+  display: block;
+  animation: fade-in 0.2s ease;
 }
 
-#clipboard-list.dragging {
+#clipboard-list.closing-animation {
   display: block;
+  overflow: hidden;
+  animation: scale-down 0.4s ease;
 }
 
 #card-list {
@@ -171,6 +176,7 @@ header #home:active {
   padding: 10px;
   margin-block: 10px;
   background-color: var(--color-bg-4);
+  color: var(--color-font-1);
   margin-bottom: 5px;
   border-radius: 5px;
   cursor: pointer;
@@ -178,6 +184,7 @@ header #home:active {
   transition: background 0.5s;
   transition: opacity 0.2s;
   position: relative;
+  overflow: hidden;
 }
 
 .child-card.deleting:not(.dragging) {
@@ -346,7 +353,10 @@ li input[type="checkbox"]:disabled:hover::before {
 
 @keyframes scale-down {
   to {
-    height: 0;
+    height: 0px;
+    padding: 0px;
+    border-width: 0px;
+    opacity: 0;
   }
 }
 

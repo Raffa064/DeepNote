@@ -58,6 +58,25 @@ function mainSetup() {
     },
   };
 
+  function closeClipboardAnimation() {
+    const classes = ["dragging", "not-empty", "closing-animation"];
+    const containsAlmostOneClass = classes.find((clazz) => {
+      return clipboardList.classList.contains(clazz);
+    });
+
+    if (containsAlmostOneClass) {
+      return;
+    }
+
+    const afterAnimation = () => {
+      clipboardList.classList.remove("closing-animation");
+      clipboardList.removeEventListener("animationend", afterAnimation);
+    };
+
+    clipboardList.classList.add("closing-animation");
+    clipboardList.addEventListener("animationend", afterAnimation);
+  }
+
   const sortableOptions = {
     group: "card-list",
     handle: ".handler",
@@ -68,6 +87,7 @@ function mainSetup() {
     },
     onEnd: (evt) => {
       clipboardList.classList.remove("dragging");
+      closeClipboardAnimation();
 
       const fromList = CARD_LISTS[evt.from.id];
       const toList = CARD_LISTS[evt.to.id];
@@ -85,6 +105,15 @@ function mainSetup() {
     ...sortableOptions,
   });
 
+  createTreeObserver(clipboardList, () => {
+    if (clipboardList.children.length === 0) {
+      clipboardList.classList.remove("not-empty");
+      closeClipboardAnimation();
+    } else {
+      clipboardList.classList.add("not-empty");
+    }
+  });
+
   const noChildren = document.createElement("span");
   noChildren.id = "card-no-children";
   noChildren.textContent =
@@ -96,14 +125,6 @@ function mainSetup() {
       cardContainer.insertBefore(noChildren, cardChildrenList);
     } else {
       noChildren.remove();
-    }
-  });
-
-  createTreeObserver(clipboardList, () => {
-    if (clipboardList.children.length === 0) {
-      clipboardList.classList.add("empty");
-    } else {
-      clipboardList.classList.remove("empty");
     }
   });
 
