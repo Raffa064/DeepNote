@@ -184,7 +184,6 @@ header #home:active {
   transition: background 0.5s;
   transition: opacity 0.2s;
   position: relative;
-  overflow: hidden;
 }
 
 .child-card.deleting:not(.dragging) {
@@ -209,6 +208,8 @@ header #home:active {
 .child-card span {
   flex: 1;
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .child-card:not(.deleting)::before {
