@@ -247,6 +247,13 @@ function toggleSelectionMode() {
 }
 
 function renderCard() {
+  // Reset page scroll
+  scroll({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
+
   // Openning animation
   cardContainer.classList.add("anim-stretch");
   cardContainer.onanimationend = function () {
