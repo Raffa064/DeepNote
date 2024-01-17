@@ -8,7 +8,7 @@ const Debug = (() => {
   erudaScript.onload = setupDebug;
 
   function setupDebug() {
-    KeyBindings.setKey({ which: "d", ctrl: true }, toggleDebug);
+    KeyBindings.setKey({ which: "d", ctrl: true }, toggleDebug).hide();
   }
 
   function toggleDebug() {
