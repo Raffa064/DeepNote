@@ -37,23 +37,43 @@ function mainSetup() {
 
   const CARD_LISTS = {
     "clipboard-list": {
-      from: (index) => {
-        return workspace.clipboard.splice(index, 1)[0];
-      },
-      to: (index, card) => {
-        workspace.clipboard.splice(index, 0, card);
+      move: function (from, fIndex, tIndex) {
+        const clipboard = workspace.clipboard;
+        var card = null;
+
+        if (from === this) {
+          // Clipboard to Clipboard
+          card = clipboard.splice(fIndex, 1)[0];
+        } else {
+          // Children to Clipboard
+          const children = current.getChildren();
+          const len = children.length - 1;
+          const reverseFIndex = len - fIndex;
+
+          card = children.splice(reverseFIndex, 1)[0];
+        }
+
+        clipboard.splice(tIndex, 0, card);
       },
     },
     "card-list": {
-      from: (index) => {
-        const len = current.getChildrenCount() - 1;
+      move: function (from, fIndex, tIndex) {
         const children = current.getChildren();
+        var card = null;
+        const len = children.length - 1;
+        const reverseTIndex = len - tIndex;
 
-        return children.splice(len - index, 1)[0];
-      },
-      to: (index, card) => {
-        const len = current.getChildrenCount() - 1;
-        current.addChild(card, len - index);
+        if (from === this) {
+          // Children to Children
+          const reverseFIndex = len - fIndex;
+          card = children.splice(reverseFIndex, 1)[0];
+        } else {
+          // Clipboard to Children
+          const clipboard = workspace.clipboard;
+          card = clipboard.splice(fIndex, 1)[0];
+        }
+
+        current.addChild(card, reverseTIndex);
       },
     },
   };
@@ -89,11 +109,13 @@ function mainSetup() {
       clipboardList.classList.remove("dragging");
       closeClipboardAnimation();
 
+      console.log("FROM INDEX: " + evt.oldIndex);
+      console.log("TO INDEX: " + evt.newIndex);
+
       const fromList = CARD_LISTS[evt.from.id];
       const toList = CARD_LISTS[evt.to.id];
 
-      const card = fromList.from(evt.oldIndex);
-      toList.to(evt.newIndex, card);
+      toList.move(fromList, evt.oldIndex, evt.newIndex);
     },
   };
 
