@@ -248,6 +248,7 @@ DeepNote = (() => {
   }
 
   return {
+    DN_VERSION,
     createCard,
     createWorkspace,
     loadWorkspace,
