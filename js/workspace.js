@@ -78,6 +78,10 @@ function mainSetup() {
     },
   };
 
+  function updateClipboardCounter() {
+    clipboardList.dataset.cardAmount = workspace.clipboard.length;
+  }
+
   function closeClipboardAnimation() {
     const classes = ["dragging", "not-empty", "closing-animation"];
     const containsAlmostOneClass = classes.find((clazz) => {
@@ -102,8 +106,9 @@ function mainSetup() {
     handle: ".handler",
     animation: 150,
     ghostClass: "ghost",
-    onStart: (evt) => {
+    onStart: () => {
       clipboardList.classList.add("dragging");
+      updateClipboardCounter();
     },
     onEnd: (evt) => {
       clipboardList.classList.remove("dragging");
@@ -116,6 +121,7 @@ function mainSetup() {
       const toList = CARD_LISTS[evt.to.id];
 
       toList.move(fromList, evt.oldIndex, evt.newIndex);
+      updateClipboardCounter();
     },
   };
 
@@ -126,6 +132,8 @@ function mainSetup() {
   Sortable.create(cardChildrenList, {
     ...sortableOptions,
   });
+
+  clipboardList.dataset.cardAmount = workspace.clipboard.length;
 
   clipboardList.onclick = () => {
     clipboardList.classList.toggle("minimized");
