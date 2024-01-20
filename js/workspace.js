@@ -89,7 +89,7 @@ function mainSetup() {
     }
 
     const afterAnimation = () => {
-      clipboardList.classList.remove("closing-animation");
+      clipboardList.classList.remove("closing-animation", "minimized");
       clipboardList.removeEventListener("animationend", afterAnimation);
     };
 
@@ -126,6 +126,10 @@ function mainSetup() {
   Sortable.create(cardChildrenList, {
     ...sortableOptions,
   });
+
+  clipboardList.onclick = () => {
+    clipboardList.classList.toggle("minimized");
+  };
 
   createTreeObserver(clipboardList, () => {
     if (clipboardList.children.length === 0) {
