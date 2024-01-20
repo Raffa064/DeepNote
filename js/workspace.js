@@ -133,7 +133,7 @@ function mainSetup() {
     ...sortableOptions,
   });
 
-  clipboardList.dataset.cardAmount = workspace.clipboard.length;
+  updateClipboardCounter();
 
   clipboardList.onclick = () => {
     clipboardList.classList.toggle("minimized");
