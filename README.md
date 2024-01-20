@@ -8,9 +8,9 @@ An note taking app that allows you to create notes within other notes, like a tr
 
 DeepNote is specially made for android, and you can download its APK from [release section](https://github.com/Raffa064/DeepNote/releases). But you can also use it anywhere in your [favorite browser](https://raffa064.github.io/DeepNote).
 
-- [Go to Android app repo](https://github.com/Raffa065/DeepNote-App)
-
 **NOTE:** The android app works without internet, but you will need to be connect on first launch to download resources from this repo. (The app will altomatically update for new versions).
+
+- [Go to Android app repo](https://github.com/Raffa065/DeepNote-App)
 
 ## About
 
