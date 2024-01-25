@@ -20,10 +20,16 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 10px;
 }
 
 #container-header h1 {
   flex: 1;
+}
+
+#container-header button {
+  background: transparent;
+  color: white;
 }
 
 #workspace-search {

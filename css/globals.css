@@ -33,6 +33,10 @@ body {
   font-family: "Roboto", sans-serif;
 }
 
+body:not(.mobile-app) .mobile-app {
+  display: none !important;
+}
+
 #error-list {
   width: max(300px, min(50%, 800px));
   position: fixed;

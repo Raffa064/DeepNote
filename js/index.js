@@ -304,6 +304,9 @@ function setupKeyBindings() {
 
 function onMenuOptionClick(id) {
   switch (id) {
+    case "open-info":
+      location.replace("info.html");
+      break;
     case "show-keybindings":
       KeyBindings.showKeyBindingList();
       break;
