@@ -425,7 +425,7 @@ function goBack() {
 }
 
 function goHome() {
-  window.location.replace("index.html");
+  location.replace("index.html");
 }
 
 function setupKeyBindings() {

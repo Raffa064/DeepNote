@@ -39,7 +39,6 @@ const actionsList = createLabeledList("Actions", [
   },
 ]);
 
-document.body.innerHTML = "";
 document.body.appendChild(appInfoList);
 document.body.appendChild(commitInfoList);
 document.body.appendChild(actionsList);
@@ -62,7 +61,7 @@ function createLabeledList(label = "", items = []) {
 
 function createListItem({ isButton, action, label, description }) {
   const itemElt = document.createElement("li");
-  const labelElt = document.createElement(isButton ? "button" : "span");
+  const labelElt = document.createElement(isButton ? "button" : "strong");
   const descriptionElt = document.createElement("span");
 
   if (isButton) {
@@ -76,6 +75,14 @@ function createListItem({ isButton, action, label, description }) {
   itemElt.appendChild(descriptionElt);
 
   return itemElt;
+}
+
+function onMenuOptionClick(id) {
+  switch (id) {
+    case "go-home":
+      location.replace("index.html");
+      break;
+  }
 }
 
 function onListItemClick(action) {

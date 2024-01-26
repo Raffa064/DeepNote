@@ -1,5 +1,17 @@
 body {
   padding: 10px;
+  animation: fade-in 0.4s ease;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+header h1 {
+  flex: 1;
 }
 
 ul {
@@ -13,7 +25,8 @@ ul + ul {
   margin-top: 10px;
 }
 
-ul h1 {
+ul > label {
+  display: block;
   margin-bottom: 5px;
   font-size: 1rem;
   font-weight: bold;
@@ -25,10 +38,13 @@ ul li {
   color: var(--color-font-2);
 }
 
+ul li span {
+  margin-left: 10px;
+}
+
 ul li button {
   width: 100px;
   padding: 3px;
-  margin-right: 10px;
   background: var(--color-bg-4);
   color: var(--color-font-1);
 }
