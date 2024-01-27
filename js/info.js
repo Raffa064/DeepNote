@@ -29,13 +29,13 @@ const actionsList = createLabeledList("Actions", [
     isButton: true,
     action: "show-contents",
     label: "Show contents",
-    description: "Show internal folder contents.",
+    description: "List internal files.",
   },
   {
     isButton: true,
     action: "clear-cache",
     label: "Clear cache",
-    description: "This might resolve some cache problems.",
+    description: "Resolve cache problems.",
   },
 ]);
 

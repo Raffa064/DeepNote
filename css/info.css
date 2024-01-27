@@ -19,6 +19,7 @@ ul {
   padding: 10px;
   background: var(--color-bg-3);
   border-radius: 4px;
+  overflow-x: scroll;
 }
 
 ul + ul {
@@ -33,16 +34,20 @@ ul > label {
   color: var(--color-font-1);
 }
 
-ul li {
-  padding: 2px;
+li {
+  margin-right: 10px;
   color: var(--color-font-2);
 }
 
-ul li span {
+li + li {
+  margin-top: 3px;
+}
+
+li span {
   margin-left: 10px;
 }
 
-ul li button {
+li button {
   width: 100px;
   padding: 3px;
   background: var(--color-bg-4);
