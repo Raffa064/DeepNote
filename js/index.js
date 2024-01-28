@@ -36,7 +36,14 @@ workspaceCreateButton.onclick = function () {
       const name = modal.getInput();
       createWorkspace(name).save();
       openWorkspace(name);
-    });
+    })
+    .setInputValidator()
+    .createRule("checkWorkspaceName", ([], value) => {
+      const workspaceNames = getWorkspaceNames();
+
+      return !workspaceNames.includes(value);
+    })
+    .checkWorkspaceName();
 };
 
 function createModal() {
@@ -60,6 +67,24 @@ function createModal() {
     }
   };
 
+  const formJS = FormJS();
+  var validator = null;
+
+  modalInput.oninput = () => {
+    if (validator) {
+      const isValid = validator(modalInput.value);
+
+      if (isValid) {
+        modalInput.classList.remove("invalid");
+      } else {
+        modalInput.classList.add("invalid");
+      }
+
+      modalNegativeButton.disabled = !isValid;
+      modalPositiveButton.disabled = !isValid;
+    }
+  };
+
   function open() {
     document.body.style.overflow = "hidden";
     modalContainer.style.display = "flex";
@@ -70,15 +95,20 @@ function createModal() {
 
     modalContainer.classList.add("anim-fade-in");
 
+    validator = null;
+    modalInput.classList.remove("invalid");
+    modalNegativeButton.disabled = false;
+    modalPositiveButton.disabled = false;
+
     return modalObj;
   }
 
   function close() {
     modalContainer.classList.add("anim-fade-out");
 
-    var callback;
+    var closeCallback;
     function then(_callback) {
-      callback = _callback;
+      closeCallback = _callback;
     }
 
     const onAnimationEnd = () => {
@@ -86,8 +116,8 @@ function createModal() {
       modalContainer.style.display = "none";
       modalContainer.removeEventListener("animationend", onAnimationEnd);
 
-      if (callback) {
-        callback();
+      if (closeCallback) {
+        closeCallback();
       }
     };
 
@@ -121,6 +151,10 @@ function createModal() {
     return modalObj;
   }
 
+  function setInputValidator() {
+    return (validator = formJS());
+  }
+
   function getInput() {
     return modalInput.value;
   }
@@ -146,6 +180,7 @@ function createModal() {
     setMessage,
     setInput,
     getInput,
+    setInputValidator,
     setPositive: (text, onclick) => setButton("positive", text, onclick),
     setNegative: (text, onclick) => setButton("negative", text, onclick),
   });

@@ -148,6 +148,10 @@ body {
   border-radius: 4px;
 }
 
+#modal-input.invalid {
+  border-color: var(--color-error);
+}
+
 .modal-button {
   width: 100%;
   padding: 10px;
@@ -158,6 +162,11 @@ body {
 
 .modal-button + .modal-button {
   margin-top: 10px;
+}
+
+.modal-button:disabled {
+  opacity: 0.6;
+  filter: saturate(60%);
 }
 
 #modal-positive-button {
