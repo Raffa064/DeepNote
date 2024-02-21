@@ -289,9 +289,9 @@ function renderCard() {
   });
 
   // Openning animation
-  cardContainer.classList.add("anim-stretch");
+  cardContainer.classList.add("card-opening-animation");
   cardContainer.onanimationend = function () {
-    cardContainer.classList.remove("anim-stretch");
+    cardContainer.classList.remove("card-opening-animation");
   };
 
   // Display values

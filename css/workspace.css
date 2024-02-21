@@ -362,6 +362,20 @@ li input[type="checkbox"]:disabled:hover::before {
   animation: scale-down 0.2s linear;
 }
 
+.card-opening-animation {
+  animation: card-opening-animation .2s ease;
+}
+
+@keyframes card-opening-animation {
+  from {
+    opacity: .2;
+  } 
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes stretch {
   0%,
   100% {
