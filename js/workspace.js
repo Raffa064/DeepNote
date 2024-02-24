@@ -108,20 +108,17 @@ function mainSetup() {
     ghostClass: "ghost",
     onStart: () => {
       clipboardList.classList.add("dragging");
-      updateClipboardCounter();
     },
     onEnd: (evt) => {
       clipboardList.classList.remove("dragging");
       closeClipboardAnimation();
-
-      console.log("FROM INDEX: " + evt.oldIndex);
-      console.log("TO INDEX: " + evt.newIndex);
 
       const fromList = CARD_LISTS[evt.from.id];
       const toList = CARD_LISTS[evt.to.id];
 
       toList.move(fromList, evt.oldIndex, evt.newIndex);
       updateClipboardCounter();
+      updateCardDisplayValues();
     },
   };
 
@@ -280,6 +277,13 @@ function toggleSelectionMode() {
   }
 }
 
+function updateCardDisplayValues() {
+  cardCheckbox.checked = current.isChecked();
+  cardCheckbox.disabled = current.hasChildren();
+  cardTitleInput.value = current.getTitle();
+  cardDescriptionInput.value = current.getDescription();
+}
+
 function renderCard() {
   // Reset page scroll
   scroll({
@@ -295,10 +299,7 @@ function renderCard() {
   };
 
   // Display values
-  cardCheckbox.checked = current.isChecked();
-  cardCheckbox.disabled = current.hasChildren();
-  cardTitleInput.value = current.getTitle();
-  cardDescriptionInput.value = current.getDescription();
+  updateCardDisplayValues()
 
   // Interations
   cardCheckbox.onchange = function () {
