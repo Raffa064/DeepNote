@@ -107,7 +107,12 @@ DeepNote = (() => {
     };
 
     card.getDescription = () => {
-      return card.description;
+      const description = card.description || ""
+
+      if (description.startsWith('<span>')) {
+        description = "<span>" + description + "</span>"
+      }
+      return description;
     };
 
     card.hasChildren = () => {

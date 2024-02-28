@@ -11,10 +11,12 @@ const workspaceName = getElementById("workspace-name");
 const cardContainer = getElementById("card");
 const cardCheckbox = getElementById("card-checkbox");
 const cardTitleInput = getElementById("card-title");
-const cardDescriptionContainer = getElementById("card-description-container");
+const cardDescription = getElementById("card-description");
 const cardDescriptionExpand = getElementById("card-description-expand");
 const cardDescriptionColapse = getElementById("card-description-colapse");
-const cardDescriptionInput = getElementById("card-description");
+const cardDescriptionContainer = getElementById("card-description-container");
+var cardDescriptionEditor = null; // Rich text editor
+const cardDescriptionToolbar = getElementById("card-description-toolbar")
 const clipboardList = getElementById("clipboard-list");
 const cardChildrenList = getElementById("card-list");
 const cardButtonUp = getElementById("card-button-up");
@@ -27,6 +29,12 @@ const selectionMode = createSelectionMode();
 
 mainSetup();
 
+function setupRichTextEditor() {
+  cardDescriptionEditor = new Quill(cardDescriptionContainer, {
+    theme: "snow"
+  });
+}
+
 function mainSetup() {
   workspaceName.textContent = WORKSPACE_NAME;
 
@@ -34,6 +42,8 @@ function mainSetup() {
   cardDescriptionColapse.onclick = toggleExpandedDescription;
   cardButtonDown.onclick = addNewCard;
   cardButtonUp.onclick = goBack;
+
+  setupRichTextEditor();
 
   const CARD_LISTS = {
     "clipboard-list": {
@@ -182,18 +192,18 @@ function createTreeObserver(target, callback) {
 }
 
 function toggleExpandedDescription() {
-  if (cardDescriptionContainer.classList.contains("expanded")) {
+  if (cardDescription.classList.contains("expanded")) {
     // Close expanded description
     document.body.style.overflow = "scroll";
-    cardDescriptionContainer.classList.remove("expanded");
-    cardDescriptionInput.blur();
+    cardDescription.classList.remove("expanded");
+    cardDescriptionEditor.blur();
     return false;
   }
 
   // Open expanded description
   document.body.style.overflow = "hidden";
-  cardDescriptionContainer.classList.add("expanded");
-  cardDescriptionInput.focus();
+  cardDescription.classList.add("expanded");
+  cardDescriptionEditor.focus();
   return true;
 }
 
@@ -281,7 +291,12 @@ function updateCardDisplayValues() {
   cardCheckbox.checked = current.isChecked();
   cardCheckbox.disabled = current.hasChildren();
   cardTitleInput.value = current.getTitle();
-  cardDescriptionInput.value = current.getDescription();
+
+  const delta = cardDescriptionEditor.clipboard.convert({
+    html: current.getDescription()
+  });
+
+  cardDescriptionEditor.setContents(delta, "silent");
 }
 
 function renderCard() {
@@ -311,9 +326,10 @@ function renderCard() {
     current.setTitle(cardTitleInput.value);
   };
 
-  cardDescriptionInput.oninput = function () {
-    current.setDescription(cardDescriptionInput.value);
-  };
+  cardDescriptionEditor.on("text-change", () => {
+    console.log('Amigo estou aqui')
+    current.setDescription(cardDescriptionEditor.getSemanticHTML());
+  });
 
   // Clipboard
   clipboardList.innerHTML = "";
