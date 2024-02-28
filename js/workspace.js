@@ -47,7 +47,7 @@ function mainSetup() {
 
   const CARD_LISTS = {
     "clipboard-list": {
-      move: function (from, fIndex, tIndex) {
+      move: (from, fIndex, tIndex) => {
         const clipboard = workspace.clipboard;
         var card = null;
 
@@ -67,7 +67,7 @@ function mainSetup() {
       },
     },
     "card-list": {
-      move: function (from, fIndex, tIndex) {
+      move: (from, fIndex, tIndex) => {
         const children = current.getChildren();
         var card = null;
         const len = children.length - 1;
@@ -88,11 +88,11 @@ function mainSetup() {
     },
   };
 
-  function updateClipboardCounter() {
+  const updateClipboardCounter = () => {
     clipboardList.dataset.cardAmount = workspace.clipboard.length;
   }
 
-  function closeClipboardAnimation() {
+  const closeClipboardAnimation = () => {
     const classes = ["dragging", "not-empty", "closing-animation"];
     const containsAlmostOneClass = classes.find((clazz) => {
       return clipboardList.classList.contains(clazz);
@@ -287,18 +287,6 @@ function toggleSelectionMode() {
   }
 }
 
-function updateCardDisplayValues() {
-  cardCheckbox.checked = current.isChecked();
-  cardCheckbox.disabled = current.hasChildren();
-  cardTitleInput.value = current.getTitle();
-
-  const delta = cardDescriptionEditor.clipboard.convert({
-    html: current.getDescription()
-  });
-
-  cardDescriptionEditor.setContents(delta, "silent");
-}
-
 function renderCard() {
   // Reset page scroll
   scroll({
@@ -309,20 +297,28 @@ function renderCard() {
 
   // Openning animation
   cardContainer.classList.add("card-opening-animation");
-  cardContainer.onanimationend = function () {
+  cardContainer.onanimationend = () => {
     cardContainer.classList.remove("card-opening-animation");
   };
 
   // Display values
-  updateCardDisplayValues()
+  cardCheckbox.checked = current.isChecked();
+  cardCheckbox.disabled = current.hasChildren();
+  cardTitleInput.value = current.getTitle();
+
+  const delta = cardDescriptionEditor.clipboard.convert({
+    html: current.getDescription()
+  });
+
+  cardDescriptionEditor.setContents(delta, "silent");
 
   // Interations
-  cardCheckbox.onchange = function () {
+  cardCheckbox.onchange = () => {
     const checked = current.setChecked(cardCheckbox.checked);
     cardCheckbox.checked = checked;
   };
 
-  cardTitleInput.oninput = function () {
+  cardTitleInput.oninput = () => {
     current.setTitle(cardTitleInput.value);
   };
 
@@ -341,7 +337,7 @@ function renderCard() {
   // Child card list
   cardChildrenList.innerHTML = "";
   if (current.hasChildren()) {
-    current.children.forEach(function (child) {
+    current.children.forEach((child) => {
       const listItem = renderChildCard(child);
       cardChildrenList.insertBefore(listItem, cardChildrenList.firstChild);
     });
@@ -377,7 +373,7 @@ function renderChildCard(child) {
   }
 
   // Interations
-  childItem.onclick = function () {
+  childItem.onclick = () => {
     if (childItem.parentNode !== cardChildrenList) return;
 
     current = child;
@@ -387,12 +383,13 @@ function renderChildCard(child) {
   var warningTimeout;
   var deleteTimeout;
 
-  childItem.ontouchstart = function (evt) {
+  childItem.ontouchstart = (evt) => {
     if (evt.target === childCheckbox) {
       return;
     }
 
     if (childItem.parentNode !== cardChildrenList) return;
+    
     warningTimeout = setTimeout(() => {
       childItem.classList.add("deleting"); // display deletion warning
     }, 100);
@@ -408,7 +405,7 @@ function renderChildCard(child) {
     }, DELETION_HOLD_DELAY);
   };
 
-  const cancelDeletion = function () {
+  const cancelDeletion = () => {
     if (childItem.parentNode !== cardChildrenList) return;
 
     childItem.classList.remove("deleting");
