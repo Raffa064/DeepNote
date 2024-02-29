@@ -18,4 +18,5 @@ I created this app with the purpose of facilitating the creation of todolists fo
 
 ## Th'rd Party Libs
 
-- [Sortable.js](https://sortablejs.github.io/Sortable/)
+- [Sortable.js](https://sortablejs.github.io/Sortable/) ([repo](https://github.com/SortableJS/Sortable))
+- [Quill.js](https://quilljs.com/) ([repo](https://github.com/quilljs/quill/))
