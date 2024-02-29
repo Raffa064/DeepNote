@@ -96,15 +96,15 @@ header #home:active {
   display: inline;
 }
 
-#card-description {
+#card-description-container {
   flex: 1;
   width: 100%;
   height: 4rem;
-  padding: 10px;
   background: var(--color-bg-3);
   color: var(--color-font-2);
   resize: none;
   font-family: monospace;
+  border: none;
 }
 
 #card-description-toolbar {
@@ -114,29 +114,77 @@ header #home:active {
 #card-description.expanded > #card-description-toolbar {
   display: flex;
   flex-direction: row;
-  gap: 4px;
-  justify-content: center;
   width: 100%;
   height: 40px;
-  padding: 4px;
+  align-items: center;
+  padding-inline: 10px;
   list-style: none;
   background: var(--color-bg-3);
-  color: var(--color-font-1); 
+  color: var(--color-font-1);
+  border: none;
 }
 
-#card-description-toolbar > li {
-  width: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--color-bg-3);
-  height: 100%;
-  border-radius: 4px;
-  transition: .2s;
+@media (min-width: 600px) {
+  #card-description-toolbar {
+    justify-content: center;
+  }
 }
 
-#card-description-toolbar > li:active {
+/* Override quill.snow.css */
+
+.ql-snow .ql-size-small {
+  font-size: 11.2px;
+}
+
+.ql-snow .ql-editor {
+  font-size: 14px;
+}
+
+.ql-snow .ql-size-large {
+  font-size: 21px;
+}
+
+.ql-snow .ql-size-huge {
+  font-size: 24px;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  top: 0px;
+  transform: translateY(-110%);
   background: var(--color-bg-4);
+  color: var(--color-font-2);
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0px 0px 5px var(--color-shadow);
+}
+
+.ql-snow .ql-picker-label {
+  color: var(--color-font-2);
+  border: none;
+}
+
+.ql-snow .ql-stroke {
+  stroke: var(--color-font-2);
+}
+
+.ql-snow .ql-fill {
+  fill: var(--color-font-2);
+}
+
+.ql-snow .ql-tooltip {
+  background: var(--color-bg-4);
+  color: var(--color-font-2);
+  box-shadow: none;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0px 0px 5px var(--color-shadow);
+}
+
+.ql-snow .ql-tooltip input {
+  background: var(--color-bg-3);
+  color: var(--color-font-2);
+  outline: none;
+  border-radius: 4px;
 }
 
 #clipboard-list {

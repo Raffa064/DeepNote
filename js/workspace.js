@@ -31,7 +31,13 @@ mainSetup();
 
 function setupRichTextEditor() {
   cardDescriptionEditor = new Quill(cardDescriptionContainer, {
-    theme: "snow"
+    theme: "snow",
+    syntax: true,
+    modules: {
+      toolbar: {
+        container: "#card-description-toolbar"
+      }
+    }
   });
 }
 

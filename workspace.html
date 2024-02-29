@@ -6,8 +6,8 @@
     <meta http-equiv="cache-control" content="no-cache" />
     <meta http-equiv="expires" content="0" />
     <meta http-equiv="pragma" content="no-cache" />
+    <link rel="stylesheet" href="./css/quill.snow.css" />
     <link rel="stylesheet" href="./css/globals.css" />
-    <link rel="stylesheet" href="./css/quill.snow.css">
     <link rel="stylesheet" href="./css/workspace.css" />
     <script src="./js/error-handler.js"></script>
   </head>
@@ -68,12 +68,22 @@
           <button id="card-description-colapse">Colapse</button>
         </span>
         <div id="card-description-container"></div>
-        <ul id="card-description-toolbar">
-          <li><strong>B</strong></li> 
-          <li><em><code>I</code></em></li>
-          <li><span>T<strong><sup>A</sup></strong></span></li>
-          <li><span>T<strong><sub>A</sub></strong></span></li>
-        </ul>
+        <div id="card-description-toolbar">
+          <select class="ql-size">
+            <option selected></option>
+            <option value="small"></option>
+            <option value="large"></option>
+            <option value="huge"></option>
+          </select>
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-underline"></button>
+          <button class="ql-strike"></button>
+          <button class="ql-script" value="sub"></button>
+          <button class="ql-script" value="super"></button>
+          <button class="ql-list" value="bullet"></button>
+          <button class="ql-link"></button>
+        </div>
       </div>
 
       <ul id="clipboard-list"></ul>
