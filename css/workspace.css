@@ -133,8 +133,10 @@ header #home:active {
 /* Override quill.snow.css */
 
 .ql-snow .ql-blank::before {
+  left: 10px;
   color: var(--color-font-2);
   opacity: .6;
+  font-style: normal;
 } 
 
 .ql-snow .ql-size-small {
@@ -143,6 +145,7 @@ header #home:active {
 
 .ql-snow .ql-editor {
   font-size: 14px;
+  padding: 10px!important;
 }
 
 .ql-snow .ql-size-large {
