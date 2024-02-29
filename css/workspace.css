@@ -132,6 +132,11 @@ header #home:active {
 
 /* Override quill.snow.css */
 
+.ql-snow .ql-blank::before {
+  color: var(--color-font-2);
+  opacity: .6;
+} 
+
 .ql-snow .ql-size-small {
   font-size: 11.2px;
 }
