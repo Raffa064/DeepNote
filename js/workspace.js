@@ -30,7 +30,7 @@ const selectionMode = createSelectionMode();
 mainSetup();
 
 function setupRichTextEditor() {
-  cardDescriptionEditor = new Quill(cardDescriptionContainer, {
+  const quill = new Quill(cardDescriptionContainer, {
     placeholder: 'Description',
     theme: "snow",
     syntax: true,
@@ -40,6 +40,48 @@ function setupRichTextEditor() {
       }
     }
   });
+
+  const { keyboard } = quill;
+
+  const listHandler = (range, format, value) => {
+    const lineFormats = quill.getFormat(range)
+    
+    if (lineFormats["list"]) {
+      quill.format("list", false)
+    } else {
+      quill.formatLine(range.index, 0, format, value)
+    }
+
+    return true
+  }
+
+  const formatKeys = [
+    ["b", "bold"],
+    ["i", "italic"],
+    ["u", "underline"],
+    ["d", "strike"],
+    ["s", "script", "sub"],
+    ["S", "script", "super"],
+    ["l", "list", "bullet", listHandler],
+  ];
+
+  formatKeys.forEach(([key, format, value, _handler]) => {
+    keyboard.addBinding({
+      key,
+      ctrlKey: true,
+      handler: (range) => {
+        if (_handler) {
+          _handler(range, format, value)
+          return true
+        }
+
+        quill.format(range.index, 0, format, value)
+        return true
+      }
+    })
+  })
+
+  cardDescriptionEditor = quill;
 }
 
 function mainSetup() {
@@ -330,7 +372,6 @@ function renderCard() {
   };
 
   cardDescriptionEditor.on("text-change", () => {
-    console.log('Amigo estou aqui')
     current.setDescription(cardDescriptionEditor.getSemanticHTML());
   });
 
@@ -452,7 +493,12 @@ function goHome() {
 function setupKeyBindings() {
   const { setKey } = KeyBindings;
 
-  setKey({ which: "h", ctrl: true }, goHome, "Go Home");
+  setKey({ which: "h", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      goHome()
+      return true;
+    }
+  }, "Go Home");
 
   setKey(
     { which: "m", ctrl: true },
@@ -468,11 +514,21 @@ function setupKeyBindings() {
     "Expand description",
   );
 
-  setKey({ which: "b", ctrl: true }, goBack, "Go Back");
+  setKey({ which: "b", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      goBack()
+      return true
+    }
+  }, "Go Back");
 
   setKey({ which: "n", ctrl: true }, addNewCard, "New Card");
 
-  setKey({ which: "l", ctrl: true }, toggleSelectionMode, "Selection mode");
+  setKey({ which: "l", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      toggleSelectionMode()
+      return true
+    }
+  }, "Selection mode");
 
   setKey(
     { which: "ArrowUp", manualEventLocker: true },
