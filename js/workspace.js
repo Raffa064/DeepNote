@@ -56,13 +56,14 @@ function setupRichTextEditor() {
   }
 
   const formatKeys = [
-    ["b", "bold"],
-    ["i", "italic"],
-    ["u", "underline"],
-    ["d", "strike"],
-    ["s", "script", "sub"],
-    ["S", "script", "super"],
-    ["l", "list", "bullet", listHandler],
+    //Key   Format        Option          Custom behavior
+    ["b",   "bold",       undefined,      undefined],
+    ["i",   "italic",     undefined,      undefined],
+    ["u",   "underline",  undefined,      undefined],
+    ["s",   "strike",     true,           undefined],
+    ["9",   "script",     "sub",          undefined],
+    ["0",   "script",     "super",        undefined],
+    ["l",   "list",       "bullet",       listHandler],
   ];
 
   formatKeys.forEach(([key, format, value, _handler]) => {
@@ -75,7 +76,15 @@ function setupRichTextEditor() {
           return true
         }
 
-        quill.format(range.index, 0, format, value)
+        const lineFormats = quill.getFormat(range)
+    
+        console.log(lineFormats[format])
+        if (lineFormats[format] && lineFormats[format] === value) {
+          quill.format(format, false)
+        } else {
+          quill.formatText(range.index, range.length, format, value)
+        }
+
         return true
       }
     })
