@@ -105,7 +105,7 @@ function mainSetup() {
 
   const CARD_LISTS = {
     "clipboard-list": {
-      move: (from, fIndex, tIndex) => {
+      move: function (from, fIndex, tIndex) {
         const clipboard = workspace.clipboard;
         var card = null;
 
@@ -125,7 +125,7 @@ function mainSetup() {
       },
     },
     "card-list": {
-      move: (from, fIndex, tIndex) => {
+      move: function (from, fIndex, tIndex) {
         const children = current.getChildren();
         var card = null;
         const len = children.length - 1;
@@ -186,7 +186,6 @@ function mainSetup() {
 
       toList.move(fromList, evt.oldIndex, evt.newIndex);
       updateClipboardCounter();
-      updateCardDisplayValues();
     },
   };
 
