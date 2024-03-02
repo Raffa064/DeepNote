@@ -2,7 +2,7 @@ const appInfoList = createLabeledList("AppInfo", [
   { label: "Package:", description: App.package },
   {
     label: "Version:",
-    description: App.versionCode + " (" + App.versionName + ")",
+    description: App.versionName + " (" + App.versionCode + ")",
   },
 ]);
 

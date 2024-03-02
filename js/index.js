@@ -246,7 +246,17 @@ function renderWorkspace(name) {
                 modal.close();
               });
           });
-        });
+        })
+        .setInputValidator()
+        .createRule("checkWorkspaceName", ([], value) => {
+          if (value === name) {
+            return true // No changes
+          }
+
+          const workspaceNames = getWorkspaceNames();
+          return !workspaceNames.includes(value);
+        })
+        .checkWorkspaceName();
     }, HOLD_TO_EDIT_DELAY);
   };
 
