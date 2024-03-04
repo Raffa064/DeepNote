@@ -1,5 +1,6 @@
 // Imports
 const { loadWorkspace, createCard } = DeepNote;
+const { getParams, getElementById, createTreeObserver } = Utils
 
 // Constants
 const { WORKSPACE_NAME } = getParams();
@@ -27,7 +28,25 @@ const workspace = loadWorkspace(WORKSPACE_NAME);
 var current = workspace.root;
 const selectionMode = createSelectionMode();
 
-mainSetup();
+setup();
+
+function setup() {
+  workspaceName.textContent = WORKSPACE_NAME;
+  setupInterativeElements();
+  setupKeyBindings();
+  renderCard();
+  setInterval(workspace.save, AUTO_SAVE_DELAY);
+}
+
+function setupInterativeElements() {
+  cardDescriptionExpand.onclick = toggleExpandedDescription;
+  cardDescriptionColapse.onclick = toggleExpandedDescription;
+  cardButtonDown.onclick = addNewCard;
+  cardButtonUp.onclick = goBack;
+
+  setupRichTextEditor();
+  setupDragNDropLists();
+}
 
 function setupRichTextEditor() {
   const quill = new Quill(cardDescriptionContainer, {
@@ -93,16 +112,7 @@ function setupRichTextEditor() {
   cardDescriptionEditor = quill;
 }
 
-function mainSetup() {
-  workspaceName.textContent = WORKSPACE_NAME;
-
-  cardDescriptionExpand.onclick = toggleExpandedDescription;
-  cardDescriptionColapse.onclick = toggleExpandedDescription;
-  cardButtonDown.onclick = addNewCard;
-  cardButtonUp.onclick = goBack;
-
-  setupRichTextEditor();
-
+function setupDragNDropLists() {
   const CARD_LISTS = {
     "clipboard-list": {
       move: function (from, fIndex, tIndex) {
@@ -225,123 +235,80 @@ function mainSetup() {
       noChildren.remove();
     }
   });
-
-  setupKeyBindings();
-  renderCard();
-  setInterval(workspace.save, AUTO_SAVE_DELAY);
 }
 
-function createTreeObserver(target, callback) {
-  const mObjserver = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.type === "childList") {
-        callback();
+function setupKeyBindings() {
+  const { setKey } = KeyBindings;
+
+  setKey({ which: "h", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      goHome()
+      return true;
+    }
+  }, "Go Home");
+
+  setKey(
+    { which: "m", ctrl: true },
+    () => {
+      cardCheckbox.click();
+    },
+    "Check/Uncheck",
+  );
+
+  setKey(
+    { which: "e", ctrl: true },
+    toggleExpandedDescription,
+    "Expand description",
+  );
+
+  setKey({ which: "b", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      goBack()
+      return true
+    }
+  }, "Go Back");
+
+  setKey({ which: "n", ctrl: true }, addNewCard, "New Card");
+
+  setKey({ which: "l", ctrl: true, manualEventLocker: true }, () => {
+    if (!cardDescriptionEditor.hasFocus()) {
+      selectionMode.toggle()
+      return true
+    }
+  }, "Selection mode");
+
+  setKey(
+    { which: "ArrowUp", manualEventLocker: true },
+    (evt) => {
+      if (selectionMode.isEnabled()) {
+        evt.preventDefault();
+        selectionMode.upSelection();
       }
-    });
-  });
+    },
+    "Selection up",
+  );
 
-  mObjserver.observe(target, {
-    childList: true,
-    subtree: false,
-  });
+  setKey(
+    { which: "ArrowDown", manualEventLocker: true },
+    (evt) => {
+      if (selectionMode.isEnabled()) {
+        evt.preventDefault();
+        selectionMode.downSelection();
+      }
+    },
+    "Selection down",
+  );
 
-  return mObjserver;
-}
-
-function toggleExpandedDescription() {
-  if (cardDescription.classList.contains("expanded")) {
-    // Close expanded description
-    document.body.style.overflow = "scroll";
-    cardDescription.classList.remove("expanded");
-    cardDescriptionEditor.blur();
-    return false;
-  }
-
-  // Open expanded description
-  document.body.style.overflow = "hidden";
-  cardDescription.classList.add("expanded");
-  cardDescriptionEditor.focus();
-  return true;
-}
-
-function isSelectionModeEnabled() {
-  return cardChildrenList.classList.contains("selection");
-}
-
-function createSelectionMode() {
-  const selectionMode = {};
-
-  var selectedIndex = 0;
-  var selectedElt = null;
-
-  function moveSelection() {
-    if (selectedElt) {
-      selectedElt.classList.remove("selected");
-    }
-
-    selectedElt = cardChildrenList.children.item(selectedIndex);
-    selectedElt.classList.add("selected");
-    selectedElt.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }
-
-  selectionMode.unselect = () => {
-    selectedElt.classList.remove("selected");
-  };
-
-  selectionMode.backSelection = () => {
-    selectedIndex--;
-
-    if (selectedIndex < 0) {
-      selectedIndex = current.children.length - 1;
-    }
-
-    moveSelection();
-  };
-
-  selectionMode.nextSelection = () => {
-    selectedIndex = ++selectedIndex % current.children.length;
-    moveSelection();
-  };
-
-  selectionMode.openSelection = () => {
-    const length = current.children.length - 1;
-
-    if (length < 0) {
-      toggleSelectionMode(); // can't open selection mode on a card with no children
-      return;
-    }
-
-    current = current.children[length - selectedIndex];
-    renderCard();
-  };
-
-  selectionMode.resetSelection = () => {
-    cardChildrenList.dataset.cardTitle = current.title; // selection mode title
-    selectedIndex = 0;
-    moveSelection();
-  };
-
-  return selectionMode;
-}
-
-function toggleSelectionMode() {
-  const enabled = cardChildrenList.classList.toggle("selection");
-
-  if (enabled) {
-    if (current.children.length == 0) {
-      cardChildrenList.classList.remove("selection");
-      return;
-    }
-
-    document.body.style.overflow = "hidden";
-    selectionMode.resetSelection();
-  } else {
-    document.body.style.overflow = "scroll";
-    selectionMode.unselect();
-  }
+  setKey(
+    { which: "Enter", manualEventLocker: true },
+    (evt) => {
+      if (selectionMode.isEnabled()) {
+        evt.preventDefault();
+        selectionMode.openSelected();
+      }
+    },
+    "Open selection",
+  );
 }
 
 function renderCard() {
@@ -400,8 +367,8 @@ function renderCard() {
 
     selectionMode.resetSelection();
   } else {
-    if (isSelectionModeEnabled()) {
-      toggleSelectionMode(); // disable selection mode
+    if (selectionMode.isEnabled()) {
+      selectionMode.toggle(); // disable selection mode
     }
   }
 }
@@ -478,6 +445,23 @@ function renderChildCard(child) {
   return childItem;
 }
 
+
+function toggleExpandedDescription() {
+  if (cardDescription.classList.contains("expanded")) {
+    // Close expanded description
+    document.body.style.overflow = "scroll";
+    cardDescription.classList.remove("expanded");
+    cardDescriptionEditor.blur();
+    return false;
+  }
+
+  // Open expanded description
+  document.body.style.overflow = "hidden";
+  cardDescription.classList.add("expanded");
+  cardDescriptionEditor.focus();
+  return true;
+}
+
 function addNewCard() {
   var newCard = createCard(false, "", "", []);
   current.addChild(newCard);
@@ -498,80 +482,6 @@ function goHome() {
   location.replace("index.html");
 }
 
-function setupKeyBindings() {
-  const { setKey } = KeyBindings;
-
-  setKey({ which: "h", ctrl: true, manualEventLocker: true }, () => {
-    if (!cardDescriptionEditor.hasFocus()) {
-      goHome()
-      return true;
-    }
-  }, "Go Home");
-
-  setKey(
-    { which: "m", ctrl: true },
-    () => {
-      cardCheckbox.click();
-    },
-    "Check/Uncheck",
-  );
-
-  setKey(
-    { which: "e", ctrl: true },
-    toggleExpandedDescription,
-    "Expand description",
-  );
-
-  setKey({ which: "b", ctrl: true, manualEventLocker: true }, () => {
-    if (!cardDescriptionEditor.hasFocus()) {
-      goBack()
-      return true
-    }
-  }, "Go Back");
-
-  setKey({ which: "n", ctrl: true }, addNewCard, "New Card");
-
-  setKey({ which: "l", ctrl: true, manualEventLocker: true }, () => {
-    if (!cardDescriptionEditor.hasFocus()) {
-      toggleSelectionMode()
-      return true
-    }
-  }, "Selection mode");
-
-  setKey(
-    { which: "ArrowUp", manualEventLocker: true },
-    (evt) => {
-      if (isSelectionModeEnabled()) {
-        evt.preventDefault();
-        selectionMode.backSelection();
-      }
-    },
-    "Selection up",
-  );
-
-  setKey(
-    { which: "ArrowDown", manualEventLocker: true },
-    (evt) => {
-      if (isSelectionModeEnabled()) {
-        evt.preventDefault();
-        selectionMode.nextSelection();
-      }
-    },
-    "Selection down",
-  );
-
-  setKey(
-    { which: "Enter", manualEventLocker: true },
-    (evt) => {
-      if (isSelectionModeEnabled()) {
-        evt.preventDefault();
-        selectionMode.openSelection();
-      }
-    },
-    "Open selection",
-  );
-}
-
 function onMenuOptionClick(id) {
   switch (id) {
     case "show-keybindings":
@@ -583,19 +493,93 @@ function onMenuOptionClick(id) {
   }
 }
 
-function getParams() {
-  const params = {};
+function createSelectionMode() {
+  const selectionMode = {};
 
-  const urlParams = location.search.substring(1).split("&");
+  var selectedIndex = 0;
+  var selectedElt = null;
 
-  for (const param of urlParams) {
-    const [name, value] = param.split("=").map((x) => x.trim());
-    params[name] = decodeURI(value);
+  // Focus and highlight selected card
+  const moveSelection = () => {
+    selectionMode.removeSelection()
+
+    selectedElt = cardChildrenList.children.item(selectedIndex);
+    selectedElt.classList.add("selected");
+    selectedElt.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
   }
 
-  return params;
-}
+  // Returns true when enabled
+  selectionMode.isEnabled = () => {
+    return cardChildrenList.classList.contains("selection");
+  }
 
-function getElementById(id) {
-  return document.getElementById(id);
+  // Open and close selection mode
+  selectionMode.toggle = () => {
+    const enabled = cardChildrenList.classList.toggle("selection");
+
+    if (enabled) {
+      if (current.children.length == 0) {
+        cardChildrenList.classList.remove("selection");
+        return;
+      }
+
+      document.body.style.overflow = "hidden";
+      selectionMode.resetSelection();
+    } else {
+      document.body.style.overflow = "scroll";
+    }
+  }
+
+  // Remove hightlight and reference for selected card
+  selectionMode.removeSelection = () => {
+    if (selectedElt) {
+      selectedElt.classList.remove("selected");
+      selectedElt = null;
+    }
+  };
+
+  // Move cursor up 
+  selectionMode.upSelection = () => {
+    selectedIndex--;
+
+    if (selectedIndex < 0) {
+      selectedIndex = current.children.length - 1;
+    }
+
+    moveSelection();
+  };
+
+  // move cursor down
+  selectionMode.downSelection = () => {
+    selectedIndex = ++selectedIndex % current.children.length;
+    moveSelection();
+  };
+
+  // Open selected card
+  selectionMode.openSelected = () => {
+    const length = current.children.length - 1;
+
+    if (length < 0) {
+      selectionMode.toggle(); // can't open selection mode on a card with no children
+      return;
+    }
+
+    current = current.children[length - selectedIndex];
+    renderCard();
+  };
+
+  // Reset cursor and title
+  selectionMode.resetSelection = () => {
+    selectionMode.removeSelection();
+
+    cardChildrenList.dataset.cardTitle = current.title; // selection mode title
+    
+    selectedIndex = 0
+    moveSelection();
+  };
+
+  return selectionMode;
 }
