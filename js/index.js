@@ -7,7 +7,7 @@ const workspaceList = document.querySelector("#workspace-list");
 const workspaceCreateButton = document.querySelector("#workspace-create");
 
 searchInput.oninput = () => {
-  const result = searchWorkspace((name, elt, match) => {
+  const result = searchWorkspace((_, elt, match) => {
     elt.classList.remove("highlight");
 
     if (match) {
@@ -148,7 +148,9 @@ function searchWorkspace(matcherCallback) {
       .trim()
       .includes(searchQuery.toLowerCase().trim());
 
-    matcherCallback(name, workspaceItem, match);
+    if (matcherCallback) {
+      matcherCallback(name, workspaceItem, match);
+    }
 
     if (match) {
       results.matched.push(workspace);
