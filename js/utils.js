@@ -33,9 +33,33 @@ const Utils = (() => {
     return document.getElementById(id);
   }
 
+  function createElement(tag, id, ...classes) {
+    const elt = document.createElement(tag)
+    
+    if (id) {
+      elt.id = id
+    }
+    
+    if (classes?.length > 0) {
+      elt.classList.add(classes)
+    }
+
+    return elt
+  }
+
+  function includeCSS(path) {
+    const link = createElement("link")
+    link.rel = "stylesheet"
+    link.href= path
+
+    document.head.appendChild(link);
+  }
+
   return {
     createTreeObserver,
     getParams,
-    getElementById
+    getElementById,
+    createElement,
+    includeCSS
   };
 })()

@@ -6,8 +6,6 @@ const searchInput = document.querySelector("#workspace-search");
 const workspaceList = document.querySelector("#workspace-list");
 const workspaceCreateButton = document.querySelector("#workspace-create");
 
-const modal = createModal();
-
 searchInput.oninput = () => {
   const result = searchWorkspace((name, elt, match) => {
     elt.classList.remove("highlight");
@@ -28,12 +26,12 @@ setupKeyBindings();
 refreshList();
 
 workspaceCreateButton.onclick = function () {
-  modal
+  Modal
     .open()
     .setTitle("New Workspace")
     .setInput("", "Workspace name")
     .setPositive("Create Workspace", () => {
-      const name = modal.getInput();
+      const name = Modal.getInput();
       createWorkspace(name).save();
       openWorkspace(name);
     })
@@ -45,148 +43,6 @@ workspaceCreateButton.onclick = function () {
     })
     .checkWorkspaceName();
 };
-
-function createModal() {
-  const modalObj = {};
-
-  const modalContainer = document.querySelector("#modal-container");
-  const modalTitle = document.querySelector("#modal-title");
-  const modalMessage = document.querySelector("#modal-message");
-  const modalInput = document.querySelector("#modal-input");
-  const modalPositiveButton = document.querySelector("#modal-positive-button");
-  const modalNegativeButton = document.querySelector("#modal-negative-button");
-
-  modalContainer.onanimationend = () => {
-    modalContainer.classList.remove("anim-fade-in", "anim-fade-out");
-  };
-
-  modalContainer.ontouchstart = (e) => {
-    if (e.target === modalContainer) {
-      e.preventDefault();
-      close();
-    }
-  };
-
-  const formJS = FormJS();
-  var validator = null;
-
-  modalInput.oninput = () => {
-    if (validator) {
-      const isValid = validator(modalInput.value);
-
-      if (isValid) {
-        modalInput.classList.remove("invalid");
-      } else {
-        modalInput.classList.add("invalid");
-      }
-
-      modalNegativeButton.disabled = !isValid;
-      modalPositiveButton.disabled = !isValid;
-    }
-  };
-
-  function open() {
-    document.body.style.overflow = "hidden";
-    modalContainer.style.display = "flex";
-
-    modalContainer.querySelectorAll("#modal *").forEach((elt) => {
-      elt.style.display = "none"; // Hide all modal elements
-    });
-
-    modalContainer.classList.add("anim-fade-in");
-
-    validator = null;
-    modalInput.classList.remove("invalid");
-    modalNegativeButton.disabled = false;
-    modalPositiveButton.disabled = false;
-
-    return modalObj;
-  }
-
-  function close() {
-    modalContainer.classList.add("anim-fade-out");
-
-    var closeCallback;
-    function then(_callback) {
-      closeCallback = _callback;
-    }
-
-    const onAnimationEnd = () => {
-      document.body.style.overflow = "scroll";
-      modalContainer.style.display = "none";
-      modalContainer.removeEventListener("animationend", onAnimationEnd);
-
-      if (closeCallback) {
-        closeCallback();
-      }
-    };
-
-    modalContainer.addEventListener("animationend", onAnimationEnd);
-
-    return {
-      then,
-    };
-  }
-
-  function setTitle(title) {
-    modalTitle.style.display = "block";
-    modalTitle.textContent = title;
-
-    return modalObj;
-  }
-
-  function setMessage(message) {
-    modalMessage.style.display = "block";
-    modalMessage.textContent = message;
-
-    return modalObj;
-  }
-
-  function setInput(value, placeholder) {
-    modalInput.style.display = "block";
-    modalInput.value = value;
-    modalInput.placeholder = placeholder;
-    modalInput.focus();
-
-    return modalObj;
-  }
-
-  function setInputValidator() {
-    return (validator = formJS());
-  }
-
-  function getInput() {
-    return modalInput.value;
-  }
-
-  function setButton(btn, text, onclick) {
-    const buttons = {
-      positive: modalPositiveButton,
-      negative: modalNegativeButton,
-    };
-
-    const _button = buttons[btn];
-    _button.style.display = "block";
-    _button.textContent = text;
-    _button.onclick = onclick;
-
-    return modalObj;
-  }
-
-  Object.assign(modalObj, {
-    open,
-    close,
-    setTitle,
-    setMessage,
-    setInput,
-    getInput,
-    setInputValidator,
-    setPositive: (text, onclick) => setButton("positive", text, onclick),
-    setNegative: (text, onclick) => setButton("negative", text, onclick),
-  });
-
-  return modalObj;
-}
 
 function refreshList() {
   workspaceList.innerHTML = "";
@@ -214,7 +70,7 @@ function renderWorkspace(name) {
   var editWorkspaceTimeout;
   workspaceItem.ontouchstart = () => {
     editWorkspaceTimeout = setTimeout(() => {
-      modal
+      Modal
         .open()
         .setTitle("Edit Workspace")
         .setMessage("You can change workspace name bellow:")
@@ -222,28 +78,28 @@ function renderWorkspace(name) {
         .setPositive("Save Changes", () => {
           const workspace = loadWorkspace(name);
 
-          name = modal.getInput();
+          name = Modal.getInput();
           workspace.name = name;
           workspaceName.textContent = name;
           workspaceName.style.setProperty("--length", name.length);
           workspace.save();
 
-          modal.close();
+          Modal.close();
         })
         .setNegative("Delete permanently", () => {
-          modal.close().then(() => {
-            modal
+          Modal.close().then(() => {
+            Modal
               .open()
               .setTitle("Delete workspace")
               .setMessage(
                 "Are you sure to delete the workspace '" + name + "'?",
               )
-              .setPositive("Cancel", () => modal.close())
+              .setPositive("Cancel", () => Modal.close())
               .setNegative("Yes, delete it", () => {
                 loadWorkspace(name).delete();
                 workspaceItem.remove();
 
-                modal.close();
+                Modal.close();
               });
           });
         })
@@ -332,7 +188,7 @@ function setupKeyBindings() {
   setKey(
     { which: "c", ctrl: true },
     () => {
-      modal.close();
+      Modal.close();
     },
     "Close modal",
   );
@@ -341,7 +197,7 @@ function setupKeyBindings() {
     { which: "n", ctrl: true },
     () => {
       workspaceCreateButton.click();
-      modal.setInput(searchInput.value, "Workspace name");
+      Modal.setInput(searchInput.value, "Workspace name");
     },
     "New workspace",
   );
