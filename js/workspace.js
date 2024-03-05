@@ -62,13 +62,13 @@ function setupRichTextEditor() {
 
   const { keyboard } = quill;
 
-  const listHandler = (range, format, value) => {
+  const listHandler = (range) => {
     const lineFormats = quill.getFormat(range)
     
     if (lineFormats["list"]) {
       quill.format("list", false)
     } else {
-      quill.formatLine(range.index, 0, format, value)
+      quill.formatLine(range.index, 0, "list", "bullet")
     }
 
     return true
@@ -91,13 +91,12 @@ function setupRichTextEditor() {
       ctrlKey: true,
       handler: (range) => {
         if (_handler) {
-          _handler(range, format, value)
+          _handler(range)
           return true
         }
 
         const lineFormats = quill.getFormat(range)
     
-        console.log(lineFormats[format])
         if (lineFormats[format] && lineFormats[format] === value) {
           quill.format(format, false)
         } else {
@@ -157,10 +156,7 @@ function setupDragNDropLists() {
     },
   };
 
-  const updateClipboardCounter = () => {
-    clipboardList.dataset.cardAmount = workspace.clipboard.length;
-  }
-
+  // If not dragging, empty and not already running, it will play close animation
   const closeClipboardAnimation = () => {
     const classes = ["dragging", "not-empty", "closing-animation"];
     const containsAlmostOneClass = classes.find((clazz) => {
@@ -168,7 +164,7 @@ function setupDragNDropLists() {
     });
 
     if (containsAlmostOneClass) {
-      return;
+      return; // Current state doesn't allow to close/hide clipboard 
     }
 
     const afterAnimation = () => {
@@ -178,6 +174,11 @@ function setupDragNDropLists() {
 
     clipboardList.classList.add("closing-animation");
     clipboardList.addEventListener("animationend", afterAnimation);
+  }
+
+  // Update clipboard item counter
+  const updateClipboardCounter = () => {
+    clipboardList.dataset.cardAmount = workspace.clipboard.length;
   }
 
   const sortableOptions = {
@@ -200,20 +201,17 @@ function setupDragNDropLists() {
     },
   };
 
-  Sortable.create(clipboardList, {
-    ...sortableOptions,
-  });
-
-  Sortable.create(cardChildrenList, {
-    ...sortableOptions,
-  });
+  Sortable.create(clipboardList, sortableOptions);
+  Sortable.create(cardChildrenList, sortableOptions);
 
   updateClipboardCounter();
 
+  // Toggle clipboard minimized mode
   clipboardList.onclick = () => {
     clipboardList.classList.toggle("minimized");
   };
 
+  // Check if clipboard is empty
   createTreeObserver(clipboardList, () => {
     if (clipboardList.children.length === 0) {
       clipboardList.classList.remove("not-empty");
@@ -247,19 +245,11 @@ function setupKeyBindings() {
     }
   }, "Go Home");
 
-  setKey(
-    { which: "m", ctrl: true },
-    () => {
-      cardCheckbox.click();
-    },
-    "Check/Uncheck",
-  );
+  setKey({ which: "m", ctrl: true }, () => {
+    cardCheckbox.click();
+  }, "Check/Uncheck");
 
-  setKey(
-    { which: "e", ctrl: true },
-    toggleExpandedDescription,
-    "Expand description",
-  );
+  setKey({ which: "e", ctrl: true }, toggleExpandedDescription, "Expand description");
 
   setKey({ which: "b", ctrl: true, manualEventLocker: true }, () => {
     if (!cardDescriptionEditor.hasFocus()) {
@@ -277,38 +267,26 @@ function setupKeyBindings() {
     }
   }, "Selection mode");
 
-  setKey(
-    { which: "ArrowUp", manualEventLocker: true },
-    (evt) => {
-      if (selectionMode.isEnabled()) {
-        evt.preventDefault();
-        selectionMode.upSelection();
-      }
-    },
-    "Selection up",
-  );
+  setKey({ which: "ArrowUp", manualEventLocker: true }, (evt) => {
+    if (selectionMode.isEnabled()) {
+      evt.preventDefault();
+      selectionMode.upSelection();
+    }
+  }, "Selection up");
 
-  setKey(
-    { which: "ArrowDown", manualEventLocker: true },
-    (evt) => {
-      if (selectionMode.isEnabled()) {
-        evt.preventDefault();
-        selectionMode.downSelection();
-      }
-    },
-    "Selection down",
-  );
+  setKey({ which: "ArrowDown", manualEventLocker: true }, (evt) => {
+    if (selectionMode.isEnabled()) {
+      evt.preventDefault();
+      selectionMode.downSelection();
+    }
+  }, "Selection down");
 
-  setKey(
-    { which: "Enter", manualEventLocker: true },
-    (evt) => {
-      if (selectionMode.isEnabled()) {
-        evt.preventDefault();
-        selectionMode.openSelected();
-      }
-    },
-    "Open selection",
-  );
+  setKey({ which: "Enter", manualEventLocker: true }, (evt) => {
+    if (selectionMode.isEnabled()) {
+      evt.preventDefault();
+      selectionMode.openSelected();
+    }
+  },"Open selection");
 }
 
 function renderCard() {
