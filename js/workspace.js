@@ -113,7 +113,7 @@ function setupRichTextEditor() {
 }
 
 function setupDragNDropLists() {
-  const CARD_LISTS = {
+  const dragNDropHandlers = {
     "clipboard-list": {
       move: function (from, fIndex, tIndex) {
         const clipboard = workspace.clipboard;
@@ -139,7 +139,7 @@ function setupDragNDropLists() {
         const children = current.getChildren();
         var card = null;
         const len = children.length - 1;
-        const reverseTIndex = len - tIndex;
+        var reverseTIndex = len - tIndex;
 
         if (from === this) {
           // Children to Children
@@ -149,6 +149,7 @@ function setupDragNDropLists() {
           // Clipboard to Children
           const clipboard = workspace.clipboard;
           card = clipboard.splice(fIndex, 1)[0];
+          reverseTIndex += 1;
         }
 
         current.addChild(card, reverseTIndex);
@@ -191,8 +192,8 @@ function setupDragNDropLists() {
       clipboardList.classList.remove("dragging");
       closeClipboardAnimation();
 
-      const fromList = CARD_LISTS[evt.from.id];
-      const toList = CARD_LISTS[evt.to.id];
+      const fromList = dragNDropHandlers[evt.from.id];
+      const toList = dragNDropHandlers[evt.to.id];
 
       toList.move(fromList, evt.oldIndex, evt.newIndex);
       updateClipboardCounter();
@@ -224,8 +225,7 @@ function setupDragNDropLists() {
 
   const noChildren = document.createElement("span");
   noChildren.id = "card-no-children";
-  noChildren.textContent =
-    "Create a new child card with the arrow down button.";
+  noChildren.textContent = "Create a new child card with the arrow down button.";
   cardContainer.insertBefore(noChildren, cardChildrenList);
 
   createTreeObserver(cardChildrenList, () => {
