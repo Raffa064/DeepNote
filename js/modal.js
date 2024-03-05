@@ -1,16 +1,3 @@
-/*
- <div id="modal-container">
-      <div id="modal">
-        <h2 id="modal-title"></h2>
-        <p id="modal-message"></p>
-        <input id="modal-input" />
-        <button class="modal-button" id="modal-positive-button"></button>
-        <button class="modal-button" id="modal-negative-button"></button>
-      </div>
-    </div>
-
-*/
-
 const { includeCSS, createElement } = Utils
 
 const Modal = (() => {

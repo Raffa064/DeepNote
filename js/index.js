@@ -87,21 +87,20 @@ function renderWorkspace(name) {
           Modal.close();
         })
         .setNegative("Delete permanently", () => {
-          Modal.close().then(() => {
-            Modal
-              .open()
-              .setTitle("Delete workspace")
-              .setMessage(
-                "Are you sure to delete the workspace '" + name + "'?",
-              )
-              .setPositive("Cancel", () => Modal.close())
-              .setNegative("Yes, delete it", () => {
-                loadWorkspace(name).delete();
-                workspaceItem.remove();
-
-                Modal.close();
-              });
-          });
+          Modal
+            .close()
+            .then(() => {
+              Modal
+                .open()
+                .setTitle("Delete workspace")
+                .setMessage("Are you sure to delete the workspace '" + name + "'?")
+                .setPositive("Cancel", () => Modal.close())
+                .setNegative("Yes, delete it", () => {
+                  loadWorkspace(name).delete();
+                  workspaceItem.remove();
+                  Modal.close();
+                });
+            });
         })
         .setInputValidator()
         .createRule("checkWorkspaceName", ([], value) => {
@@ -127,7 +126,7 @@ function renderWorkspace(name) {
   return workspaceItem;
 }
 
-function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
+function searchWorkspace(matcherCallback) {
   const searchQuery = searchInput.value;
 
   const results = {
@@ -165,42 +164,26 @@ function searchWorkspace(matcherCallback = (name, elt, match) => {}) {
 function setupKeyBindings() {
   const { setKey } = KeyBindings;
 
-  setKey(
-    { which: "Tab" },
-    () => {
-      searchInput.focus();
-    },
-    "Focus on input",
-  );
+  setKey({ which: "Tab" }, () => {
+    searchInput.focus();
+  }, "Focus on input");
 
-  setKey(
-    { which: "Enter" },
-    () => {
-      const { matched } = searchWorkspace();
+  setKey({ which: "Enter" }, () => {
+    const { matched } = searchWorkspace();
 
-      if (matched.length > 0) {
-        openWorkspace(matched[0].name);
-      }
-    },
-    "Enter workspace",
-  );
+    if (matched.length > 0) {
+      openWorkspace(matched[0].name);
+    }
+  }, "Enter workspace");
 
-  setKey(
-    { which: "c", ctrl: true },
-    () => {
-      Modal.close();
-    },
-    "Close modal",
-  );
+  setKey({ which: "c", ctrl: true }, () => {
+    Modal.close();
+  }, "Close modal");
 
-  setKey(
-    { which: "n", ctrl: true },
-    () => {
-      workspaceCreateButton.click();
-      Modal.setInput(searchInput.value, "Workspace name");
-    },
-    "New workspace",
-  );
+  setKey({ which: "n", ctrl: true }, () => {
+    workspaceCreateButton.click();
+    Modal.setInput(searchInput.value, "Workspace name");
+  }, "New workspace");
 }
 
 function onMenuOptionClick(id) {
