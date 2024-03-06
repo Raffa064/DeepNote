@@ -1,6 +1,5 @@
 const { getWorkspaceNames, createWorkspace, loadWorkspace } = DeepNote;
-
-const HOLD_TO_EDIT_DELAY = 300;
+const { HOLD_TO_EDIT_DELAY } = Settings;
 
 const searchInput = document.querySelector("#workspace-search");
 const workspaceList = document.querySelector("#workspace-list");

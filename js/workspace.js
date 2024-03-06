@@ -1,11 +1,7 @@
 // Imports
 const { loadWorkspace, createCard } = DeepNote;
 const { getParams, getElementById, createTreeObserver } = Utils
-
-// Constants
-const { WORKSPACE_NAME } = getParams();
-const AUTO_SAVE_DELAY = 500;
-const DELETION_HOLD_DELAY = 2000;
+const { AUTO_SAVE_DELAY, HOLD_TO_DELETE_DELAY } = Settings;
 
 // UI Elements
 const workspaceName = getElementById("workspace-name");
@@ -24,6 +20,7 @@ const cardButtonUp = getElementById("card-button-up");
 const cardButtonDown = getElementById("card-button-down");
 
 // Application state (dinamic/data)
+const { WORKSPACE_NAME } = getParams();
 const workspace = loadWorkspace(WORKSPACE_NAME);
 var current = workspace.root;
 const selectionMode = createSelectionMode();
@@ -403,7 +400,7 @@ function renderChildCard(child) {
         cardCheckbox.disabled = current.hasChildren();
         childItem.remove();
       }, 200);
-    }, DELETION_HOLD_DELAY);
+    }, HOLD_TO_DELETE_DELAY);
   };
 
   const cancelDeletion = () => {

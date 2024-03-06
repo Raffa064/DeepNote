@@ -1,0 +1,5 @@
+const Settings = {
+  HOLD_TO_EDIT_DELAY: 300,
+  HOLD_TO_DELETE_DELAY: 2000,
+  AUTO_SAVE_DELAY: 500
+}

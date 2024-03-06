@@ -1,9 +1,11 @@
 const Utils = (() => {
-  function createTreeObserver(target, callback) {
+  function createTreeObserver(target, callback, filters=["childList"], opt={}) {
     const mObjserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === "childList") {
-          callback();
+        const matchWithFilters = filters.find((type) => type === mutation.type)
+
+        if (matchWithFilters) {
+          callback(mutation.type);
         }
       });
     });
@@ -11,6 +13,7 @@ const Utils = (() => {
     mObjserver.observe(target, {
       childList: true,
       subtree: false,
+      ...opt
     });
 
     return mObjserver;
