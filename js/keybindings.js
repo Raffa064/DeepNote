@@ -1,4 +1,7 @@
 const KeyBindings = (() => {
+  const { includeCSS } = Utils
+  includeCSS("../css/keybindings.css")
+
   const KEY_BINDINGS = []; // Current page key bindings
 
   // Floating window Elements

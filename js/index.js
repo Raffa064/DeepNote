@@ -5,11 +5,17 @@ const searchInput = document.querySelector("#workspace-search");
 const workspaceList = document.querySelector("#workspace-list");
 const workspaceCreateButton = document.querySelector("#workspace-create");
 
-searchInput.oninput = () => {
-  const result = searchWorkspace((_, elt, match) => {
+searchInput.oninput = handleSearch;
+workspaceCreateButton.onclick = handleWorkspaceCreation
+
+setupKeyBindings();
+renderWorkspaces();
+
+function handleSearch() {
+  const result = queryWorkspaces((_, elt, matches) => {
     elt.classList.remove("highlight");
 
-    if (match) {
+    if (matches) {
       elt.style.display = "flex";
     } else {
       elt.style.display = "none";
@@ -19,12 +25,9 @@ searchInput.oninput = () => {
   if (result.matched.length > 0) {
     result.matched[0].elt.classList.add("highlight");
   }
-};
+}
 
-setupKeyBindings();
-refreshList();
-
-workspaceCreateButton.onclick = function () {
+function handleWorkspaceCreation() {
   Modal
     .open()
     .setTitle("New Workspace")
@@ -37,22 +40,17 @@ workspaceCreateButton.onclick = function () {
     .setInputValidator()
     .createRule("checkWorkspaceName", ([], value) => {
       const workspaceNames = getWorkspaceNames();
-
       return !workspaceNames.includes(value);
     })
     .checkWorkspaceName();
-};
+}
 
-function refreshList() {
+function renderWorkspaces() {
   workspaceList.innerHTML = "";
   for (const workspaceName of getWorkspaceNames()) {
     const li = renderWorkspace(workspaceName);
     workspaceList.appendChild(li);
   }
-}
-
-function openWorkspace(name) {
-  location.replace("workspace.html?WORKSPACE_NAME=" + encodeURI(name));
 }
 
 function renderWorkspace(name) {
@@ -125,7 +123,11 @@ function renderWorkspace(name) {
   return workspaceItem;
 }
 
-function searchWorkspace(matcherCallback) {
+function openWorkspace(name) {
+  location.replace("workspace.html?WORKSPACE_NAME=" + encodeURI(name));
+}
+
+function queryWorkspaces(matcherCallback) {
   const searchQuery = searchInput.value;
 
   const results = {
@@ -142,16 +144,16 @@ function searchWorkspace(matcherCallback) {
       elt: workspaceItem,
     };
 
-    const match = name
+    const matches = name
       .toLowerCase()
       .trim()
       .includes(searchQuery.toLowerCase().trim());
 
     if (matcherCallback) {
-      matcherCallback(name, workspaceItem, match);
+      matcherCallback(name, workspaceItem, matches);
     }
 
-    if (match) {
+    if (matches) {
       results.matched.push(workspace);
       continue;
     }
@@ -170,7 +172,7 @@ function setupKeyBindings() {
   }, "Focus on input");
 
   setKey({ which: "Enter" }, () => {
-    const { matched } = searchWorkspace();
+    const { matched } = queryWorkspaces();
 
     if (matched.length > 0) {
       openWorkspace(matched[0].name);

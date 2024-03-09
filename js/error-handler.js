@@ -7,7 +7,7 @@ addEventListener("load", () => {
   document.body.appendChild(errorList);
 });
 
-window.onerror = (event, source, lineno, colno, error) => {
+window.onerror = (_, source, lineno, colno, error) => {
   const errorNotification = createErrorNotification(
     source,
     lineno,

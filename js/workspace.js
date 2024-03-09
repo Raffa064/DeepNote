@@ -8,10 +8,10 @@ const workspaceName = getElementById("workspace-name");
 const cardContainer = getElementById("card");
 const cardCheckbox = getElementById("card-checkbox");
 const cardTitleInput = getElementById("card-title");
-const cardDescription = getElementById("card-description");
+const cardDescriptionContainer = getElementById("card-description-container");
 const cardDescriptionExpand = getElementById("card-description-expand");
 const cardDescriptionColapse = getElementById("card-description-colapse");
-const cardDescriptionContainer = getElementById("card-description-container");
+const cardDescription = getElementById("card-description");
 var cardDescriptionEditor = null; // Rich text editor
 const cardDescriptionToolbar = getElementById("card-description-toolbar")
 const clipboardList = getElementById("clipboard-list");
@@ -46,7 +46,7 @@ function setupInterativeElements() {
 }
 
 function setupRichTextEditor() {
-  const quill = new Quill(cardDescriptionContainer, {
+  const quill = new Quill(cardDescription, {
     placeholder: 'Description',
     theme: "snow",
     syntax: true,
@@ -422,17 +422,17 @@ function renderChildCard(child) {
 
 
 function toggleExpandedDescription() {
-  if (cardDescription.classList.contains("expanded")) {
+  if (cardDescriptionContainer.classList.contains("expanded")) {
     // Close expanded description
     document.body.style.overflow = "scroll";
-    cardDescription.classList.remove("expanded");
+    cardDescriptionContainer.classList.remove("expanded");
     cardDescriptionEditor.blur();
     return false;
   }
 
   // Open expanded description
   document.body.style.overflow = "hidden";
-  cardDescription.classList.add("expanded");
+  cardDescriptionContainer.classList.add("expanded");
   cardDescriptionEditor.focus();
   return true;
 }

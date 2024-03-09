@@ -1,9 +1,9 @@
 const App = (() => {
-  var isAndroidApp = null;
+  var isAndroidApp = false;
   var info = {};
 
   try {
-    // "app" is provided by android app (JavaScriptInterface)
+    // "app" is provided by android app (@JavaScriptInterface)
     const app = window.app;
     const appInfo = JSON.parse(app.getInfo());
     const commitInfo = JSON.parse(app.getCommitInfo());
