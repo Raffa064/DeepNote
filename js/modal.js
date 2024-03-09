@@ -1,6 +1,5 @@
 const Modal = (() => {
-  const { includeCSS, createElement } = Utils
-  includeCSS("../css/modal.css");
+  const { createElement } = Utils
 
   const modalObj = {};
 

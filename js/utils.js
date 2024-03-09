@@ -50,19 +50,10 @@ const Utils = (() => {
     return elt
   }
 
-  function includeCSS(path) {
-    const link = createElement("link")
-    link.rel = "stylesheet"
-    link.href= path
-
-    document.head.appendChild(link);
-  }
-
   return {
     createTreeObserver,
     getParams,
     getElementById,
     createElement,
-    includeCSS
   };
 })()
