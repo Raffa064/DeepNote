@@ -1,47 +1,53 @@
-const appInfoList = createLabeledList("AppInfo", [
-  { label: "Package:", description: App.package },
-  {
-    label: "Version:",
-    description: App.versionName + " (" + App.versionCode + ")",
-  },
-]);
+const { createElement } = Utils
+const container = document.getElementById("container") 
 
-const commitInfoList = createLabeledList("Local commit", [
-  { label: "Author:", description: App.author },
-  { label: "SHA:", description: App.sha },
-  { label: "Message:", description: App.message },
-]);
+const lists = {
+  "AppInfo": [
+    { label: "Package:", description: App.package },
+    { 
+      label: "Version:",
+      description: App.versionName + " (" + App.versionCode + ")",
+    },
+  ],
+  "Local commit": [
+    { label: "Author:", description: App.author },
+    { label: "SHA:", description: App.sha, expandable: true },
+    { label: "Message:", description: App.message },
+  ],
+  "Environment": [
+    { label: "Screen:", description: screen.width + "x" + screen.height },
+    { label: "Pixel depth:", description: screen.pixelDepth + " bits" },
+    { label: "URI:", description: location },
+    { label: "Agent:", description: navigator.userAgent, expandable: true }
+  ],
+    "Actions": [
+      {
+        action: "reload-page",
+        label: "Reload",
+        description: "Reload this page.",
+      },
+      {
+        action: "force-update",
+        label: "Force Update",
+        description: "Force download resources.",
+      },
+      {
+        action: "show-contents",
+        label: "Show contents",
+        description: "List internal files.",
+      },
+      {
+        action: "clear-cache",
+        label: "Clear cache",
+        description: "Resolve cache problems.",
+      },
+  ]
+}
 
-const actionsList = createLabeledList("Actions", [
-  {
-    isButton: true,
-    action: "reload-page",
-    label: "Reload",
-    description: "Reload this page.",
-  },
-  {
-    isButton: true,
-    action: "force-update",
-    label: "Force Update",
-    description: "Force download resources.",
-  },
-  {
-    isButton: true,
-    action: "show-contents",
-    label: "Show contents",
-    description: "List internal files.",
-  },
-  {
-    isButton: true,
-    action: "clear-cache",
-    label: "Clear cache",
-    description: "Resolve cache problems.",
-  },
-]);
-
-document.body.appendChild(appInfoList);
-document.body.appendChild(commitInfoList);
-document.body.appendChild(actionsList);
+for (let listName in lists) {
+  const list = createLabeledList(listName, lists[listName])
+  container.appendChild(list)
+}
 
 function createLabeledList(label = "", items = []) {
   const listElt = document.createElement("ul");
@@ -59,17 +65,37 @@ function createLabeledList(label = "", items = []) {
   return listElt;
 }
 
-function createListItem({ isButton, action, label, description }) {
-  const itemElt = document.createElement("li");
-  const labelElt = document.createElement(isButton ? "button" : "strong");
-  const descriptionElt = document.createElement("span");
+function createListItem({ action, label, description, expandable }) {
+  const isButton = action != null;
+
+  const itemElt = createElement("li");
+  const labelElt = createElement(isButton ? "button" : "strong");
+  const descriptionElt = createElement("span", undefined, "description");
 
   if (isButton) {
     labelElt.onclick = () => onListItemClick(action);
   }
-
+ 
   labelElt.innerText = label;
   descriptionElt.innerText = description;
+
+  if (expandable) {
+    // TODO: Use Utils.js to create
+    const content = createElement("span", undefined, "hidden")
+    const toggler = createElement("span", undefined, "toggler")
+    
+   content.innerText = description;
+   toggler.innerText = "Show";
+     
+    toggler.onclick = () => {
+      const hidden = content.classList.toggle("hidden");
+      toggler.innerText = hidden? "Show" : "Hide";
+    }
+
+    descriptionElt.innerText = "";
+    descriptionElt.appendChild(content);
+    descriptionElt.appendChild(toggler);
+  }
 
   itemElt.appendChild(labelElt);
   itemElt.appendChild(descriptionElt);
