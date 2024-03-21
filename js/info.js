@@ -17,7 +17,7 @@ const lists = {
   "Environment": [
     { label: "Screen:", description: screen.width + "x" + screen.height },
     { label: "Pixel depth:", description: screen.pixelDepth + " bits" },
-    { label: "URI:", description: location },
+    { label: "URI:", description: location, expandable: true },
     { label: "Agent:", description: navigator.userAgent, expandable: true }
   ],
     "Actions": [

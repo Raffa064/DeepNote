@@ -28,6 +28,14 @@
   font-size: 24px;
 }
 
+:not(.expanded) > .ql-snow .ql-size-small,
+:not(.expanded) > .ql-snow .ql-size-large,
+:not(.expanded) > .ql-snow .ql-size-huge {
+  font-size: inherit;
+  font-weight: bold;
+}
+
+
 /* Toolbar poppup */
 .ql-snow .ql-picker.ql-expanded .ql-picker-options {
   top: 0px;
@@ -52,6 +60,14 @@
 
 .ql-snow .ql-fill {
   fill: var(--color-font-2);
+}
+
+.ql-snow ol {
+  padding-left: 20px!important;
+}
+
+.ql-snow ol > li {
+  padding-left: 5px;
 }
 
 /* Floating tools (used for links) */

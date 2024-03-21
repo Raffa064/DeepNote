@@ -34,7 +34,9 @@ function handleWorkspaceCreation() {
     .setInput("", "Workspace name")
     .setPositive("Create Workspace", () => {
       const name = Modal.getInput();
-      createWorkspace(name).save();
+      const workspace = createWorkspace(name);
+      workspace.root.setTitle(name);
+      workspace.save();
       openWorkspace(name);
     })
     .setInputValidator()

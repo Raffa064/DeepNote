@@ -23,6 +23,12 @@
   border: none;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  scrollbar-width: none;
+  --ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 body {
